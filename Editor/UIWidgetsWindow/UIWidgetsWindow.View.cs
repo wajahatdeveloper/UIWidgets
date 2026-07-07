@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using TMPro;
@@ -24,8 +25,25 @@ namespace UIWidgets.Editor
 	{
 		private const string PrefKey_Recents = "UIWidgets.Recents";
 		private const string PrefKey_FoldoutPrefix = "UIWidgets.Foldout.";
+		private const string ProjectUIPrefabsCategory = "Project UI Prefabs";
 		private const int RecentsMax = 6;
 		private const char RecentsDelim = '|';
+
+		static UIWidgets()
+		{
+			ProjectUIPrefabScanCache.Invalidated += OnProjectUIPrefabsInvalidated;
+		}
+
+		private static void OnProjectUIPrefabsInvalidated()
+		{
+			var instances = Resources.FindObjectsOfTypeAll<UIWidgets>();
+			if (instances == null) return;
+			foreach (var window in instances)
+			{
+				if (window != null)
+					window.RefreshPalette();
+			}
+		}
 
 		private const float TileWidth = 84f;
 		private const float TileHeight = 78f;
@@ -201,7 +219,50 @@ namespace UIWidgets.Editor
 			foreach (var c in ComponentTiles)
 				list.Add(new TileInfo { name = c.name, category = c.category, component = c.type, noCanvas = false });
 
+			var curatedGuids = GetCuratedPrefabGuids();
+			foreach (var entry in ProjectUIPrefabScanCache.GetEntries())
+			{
+				if (entry.prefab == null || string.IsNullOrEmpty(entry.Name))
+					continue;
+				if (curatedGuids.Contains(entry.guid))
+					continue;
+				list.Add(new TileInfo
+				{
+					name = entry.Name,
+					category = ProjectUIPrefabsCategory,
+					prefab = entry.prefab,
+					noCanvas = entry.noCanvasRequired
+				});
+			}
+
 			return list;
+		}
+
+		private HashSet<string> GetCuratedPrefabGuids()
+		{
+			var guids = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+			if (uiWidgetsAsset?.widgets == null)
+				return guids;
+
+			void AddPrefab(GameObject prefab)
+			{
+				if (prefab == null) return;
+				var path = AssetDatabase.GetAssetPath(prefab);
+				if (string.IsNullOrEmpty(path)) return;
+				var guid = AssetDatabase.AssetPathToGUID(path);
+				if (!string.IsNullOrEmpty(guid))
+					guids.Add(guid);
+			}
+
+			foreach (var w in uiWidgetsAsset.widgets)
+			{
+				AddPrefab(w.widgetPrefab);
+				if (w.widgetVariations == null) continue;
+				foreach (var v in w.widgetVariations)
+					AddPrefab(v.widgetPrefab);
+			}
+
+			return guids;
 		}
 
 		private void RebuildGrid()
