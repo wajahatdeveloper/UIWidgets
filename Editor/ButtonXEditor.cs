@@ -18,11 +18,6 @@ namespace UIWidgets.Editor
 	[CanEditMultipleObjects]
 	public sealed class ButtonXEditor : FrameworkEditor
 	{
-		private const string InfoTooltip =
-			"Visuals are handled by ButtonX's own Colors / Sprites (below), which support extra tint " +
-			"graphics, a Loading state, and a persistent toggle-Selected look. Selectable's nav, " +
-			"interactable, and EventSystem integration are all active — see Navigation.";
-
 		// Inherited Selectable serialized fields that ButtonX supersedes with its own visual system.
 		// m_Navigation is drawn in DrawNavigationSection (Selectable-style foldout).
 		private static readonly HashSet<string> HiddenFields = new HashSet<string>
@@ -38,14 +33,6 @@ namespace UIWidgets.Editor
 
 		public override void OnInspectorGUI()
 		{
-			using (new EditorGUILayout.HorizontalScope())
-			{
-				GUILayout.FlexibleSpace();
-				var baseIcon = EditorGUIUtility.IconContent("console.infoicon.sml");
-				GUILayout.Label(new GUIContent(baseIcon != null ? baseIcon.image : null, InfoTooltip),
-					GUILayout.Width(18), GUILayout.Height(18));
-			}
-
 			// Engine draw (honors ButtonX's [FoldoutGroup]/[InlineEditor]/[ShowInInspector]/[PropertyOrder])
 			// while skipping the inherited Selectable visual fields ButtonX replaces.
 			serializedObject.Update();
