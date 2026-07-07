@@ -1,0 +1,22 @@
+{
+    "name": "UIWidgets.GameEngineCoreIntegration.Editor",
+    "rootNamespace": "",
+    "references": [
+        "UIWidgets.Runtime",
+        "UIWidgets.Editor",
+        "GameEngineCore.Editor"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [
+        "HOMAM_GEC"
+    ],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

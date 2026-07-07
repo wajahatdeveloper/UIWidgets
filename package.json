@@ -1,0 +1,31 @@
+{
+  "name": "com.homam.uiwidgets",
+  "version": "1.0.0",
+  "displayName": "UI Widgets",
+  "description": "General-purpose Unity UGUI widget library: modal dialogs, virtualized scroll lists, enhanced buttons (ButtonX), context menus, tabs, sliders, card UI, tooltips, toasts, procedural graphic primitives, UI effects, and an in-house layout engine (LayoutX). Built on FoundationPlatform.",
+  "unity": "6000.3",
+  "keywords": [
+    "ui",
+    "ugui",
+    "widgets",
+    "dialog",
+    "scrolllist",
+    "layout"
+  ],
+  "author": {
+    "name": "HOMAM"
+  },
+  "dependencies": {
+    "com.homam.foundationplatform": "1.0.0",
+    "com.cysharp.unitask": "2.3.3",
+    "com.unity.inputsystem": "1.18.0",
+    "com.unity.ugui": "2.0.0"
+  },
+  "samples": [
+    {
+      "displayName": "Input Dialog Demo",
+      "description": "Manual demo scene component exercising InputDialog (basic, validated, keyboard shortcuts).",
+      "path": "Samples~/InputDialogDemo"
+    }
+  ]
+}
