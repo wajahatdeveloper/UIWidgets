@@ -59,10 +59,10 @@ namespace UIWidgets
 		[FoldoutGroup("Sprites"), PropertyOrder(3)] public Sprite disabledSprite;
 		[FoldoutGroup("Sprites"), PropertyOrder(3)] public Sprite selectedSprite;
 
-		[InlineEditor(InlineEditorModes.GUIAndHeader), PropertyOrder(4)]
+		[InlineEditor(InlineEditorObjectFieldModes.Foldout), PropertyOrder(4)]
 		public TextMeshProUGUI textMesh;
 
-		[InlineEditor(InlineEditorModes.GUIAndHeader), PropertyOrder(5)]
+		[InlineEditor(InlineEditorObjectFieldModes.Foldout), PropertyOrder(5)]
 		public new Image image;
 
 		[PropertyOrder(6)] public Graphic[] extraGraphicsForTint;

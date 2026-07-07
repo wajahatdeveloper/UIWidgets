@@ -24,11 +24,14 @@ namespace UIWidgets.Editor
 			"interactable, and EventSystem integration are all active — see Navigation.";
 
 		// Inherited Selectable serialized fields that ButtonX supersedes with its own visual system.
+		// m_Navigation is drawn in DrawNavigationSection (Selectable-style foldout).
 		private static readonly HashSet<string> HiddenFields = new HashSet<string>
 		{
 			"m_TargetGraphic", "m_Transition", "m_Colors", "m_SpriteState",
-			"m_AnimationTriggers", "m_Interactable",
+			"m_AnimationTriggers", "m_Interactable", "m_Navigation",
 		};
+
+		private const string NavigationFoldoutKey = "btnx:navigation";
 
 		private readonly Dictionary<string, bool> _foldouts = new Dictionary<string, bool>();
 		private readonly Dictionary<string, int> _tabs = new Dictionary<string, int>();
@@ -48,7 +51,24 @@ namespace UIWidgets.Editor
 			serializedObject.Update();
 			FrameworkInspectorRenderer.Draw(this, serializedObject, target, _foldouts, _tabs,
 				drawScriptRow: true, skipFields: HiddenFields);
+			DrawNavigationSection();
 			serializedObject.ApplyModifiedProperties();
+		}
+
+		private void DrawNavigationSection()
+		{
+			var navigation = serializedObject.FindProperty("m_Navigation");
+			if (navigation == null) { return; }
+
+			EditorGUILayout.Space(4);
+			if (!_foldouts.TryGetValue(NavigationFoldoutKey, out bool expanded)) { expanded = true; }
+			expanded = EditorGUILayout.Foldout(expanded, "Navigation", true);
+			_foldouts[NavigationFoldoutKey] = expanded;
+			if (!expanded) { return; }
+
+			EditorGUI.indentLevel++;
+			EditorGUILayout.PropertyField(navigation, true);
+			EditorGUI.indentLevel--;
 		}
 	}
 }
