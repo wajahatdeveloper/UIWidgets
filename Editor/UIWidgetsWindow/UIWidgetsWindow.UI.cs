@@ -186,6 +186,36 @@ namespace UIWidgets.Editor
 
 		#endregion
 
+		#region Scene view
+
+		/// <summary>Enables Scene View 2D mode (if needed) and frames the selected UI object.</summary>
+		internal static void FocusSelectedUIIn2D()
+		{
+			var go = Selection.activeGameObject;
+			if (go == null || go.GetComponent<RectTransform>() == null)
+			{
+				DebugX.Logger(LogChannels.Editor).Error("[UI:ERROR:Editor] UIWidgets: select a UI object to focus in 2D.");
+				return;
+			}
+
+			var sceneView = SceneView.lastActiveSceneView;
+			if (sceneView == null && SceneView.sceneViews.Count > 0)
+				sceneView = SceneView.sceneViews[0] as SceneView;
+			if (sceneView == null)
+			{
+				DebugX.Logger(LogChannels.Editor).Error("[UI:ERROR:Editor] UIWidgets: no Scene View available.");
+				return;
+			}
+
+			if (!sceneView.in2DMode)
+				sceneView.in2DMode = true;
+
+			sceneView.FrameSelected();
+			sceneView.Focus();
+		}
+
+		#endregion
+
 		#region Scene-view drop
 
 		internal void HandleSceneViewDragDrop(SceneView sceneView)

@@ -180,6 +180,13 @@ namespace UIWidgets.Editor
 			});
 			row.Add(search);
 
+			var focus2D = new ToolbarButton(FocusSelectedUIIn2D)
+			{
+				text = "2D Focus",
+				tooltip = "Enable Scene View 2D mode and frame the selected UI object"
+			};
+			row.Add(focus2D);
+
 			var select = new ToolbarMenu { text = "Select", tooltip = "Bulk-select existing objects in the scene" };
 			select.menu.AppendAction("All Button + Text", _ => SelectButtonsWith<Text>(false));
 			select.menu.AppendAction("All Button + Text (under selection)", _ => SelectButtonsWith<Text>(true));
