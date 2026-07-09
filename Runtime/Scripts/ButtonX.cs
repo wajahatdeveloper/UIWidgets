@@ -45,7 +45,6 @@ namespace UIWidgets
 		// Renamed from "transition" to avoid hiding Selectable.transition. FormerlySerializedAs
 		// preserves data authored on existing prefabs/scene instances.
 		[FoldoutGroup("Transitions"), PropertyOrder(1)]
-		[FormerlySerializedAs("transition")]
 		public TransitionType visualTransition = TransitionType.ColorTint;
 		[FoldoutGroup("Colors"), PropertyOrder(2)] public Color normalColor = Color.white;
 		[FoldoutGroup("Colors"), PropertyOrder(2)] public Color highlightColor = Color.cyan;

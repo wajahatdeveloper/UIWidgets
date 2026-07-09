@@ -94,7 +94,7 @@ namespace UIWidgets.Editor
 			}
 		}
 
-		public IReadOnlyList<string> GetTier1ContractTypeNames()
+		public IReadOnlyList<string> GetRegistryContractTypeNames()
 		{
 			return Array.Empty<string>();
 		}
