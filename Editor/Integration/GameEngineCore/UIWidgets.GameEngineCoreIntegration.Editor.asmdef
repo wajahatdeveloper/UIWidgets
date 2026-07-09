@@ -4,6 +4,7 @@
     "references": [
         "UIWidgets.Runtime",
         "UIWidgets.Editor",
+        "FoundationPlatform.Runtime",
         "GameEngineCore.Editor"
     ],
     "includePlatforms": [

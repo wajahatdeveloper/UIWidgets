@@ -1,7 +1,11 @@
 #if UNITY_EDITOR
 using System;
 using System.Collections.Generic;
+using FoundationPlatform.Utilities.Menus;
 using GameEngineCore.Editor;
+using UnityEditor;
+using UnityEngine;
+using UnityEngine.SceneManagement;
 using static GameEngineCore.Editor.PackageWorkflowBuilder;
 
 namespace UIWidgets.Editor
@@ -32,7 +36,7 @@ namespace UIWidgets.Editor
 					ScopedTypeNames = Array.Empty<string>(),
 					PrimaryActions = new[]
 					{
-						ActionMenu("Open UI Widgets Window", "Window/UIWidgets/UI Widgets...")
+						ActionMenu("Open UI Widgets Window", MenuPaths.UIWidgets.WidgetsWindow)
 					},
 					ReadinessChecks = Array.Empty<PackageWorkflowReadinessDef>(),
 					IntegrationLinks = Array.Empty<PackageWorkflowIntegrationLinkDef>()
@@ -42,6 +46,52 @@ namespace UIWidgets.Editor
 
 		public void AppendStatusLines(PackageIntegrationManifest manifest, List<PackageTaskStatusLine> lines)
 		{
+			var scene = SceneManager.GetActiveScene();
+			if (!scene.IsValid())
+			{
+				return;
+			}
+
+			var roots = scene.GetRootGameObjects();
+			var widgetCount = 0;
+			var hasSafeArea = false;
+			for (var i = 0; i < roots.Length; i++)
+			{
+				var behaviours = roots[i].GetComponentsInChildren<MonoBehaviour>(true);
+				for (var b = 0; b < behaviours.Length; b++)
+				{
+					var behaviour = behaviours[b];
+					if (behaviour == null)
+					{
+						continue;
+					}
+
+					var ns = behaviour.GetType().Namespace;
+					if (ns != null && ns.StartsWith("UIWidgets", StringComparison.Ordinal))
+					{
+						widgetCount++;
+						if (behaviour.GetType().Name == "SafeArea")
+						{
+							hasSafeArea = true;
+						}
+					}
+				}
+			}
+
+			lines.Add(new PackageTaskStatusLine
+			{
+				Message = $"Scene widgets: {widgetCount}",
+				Severity = widgetCount > 0 ? PackageTaskStatusSeverity.Info : PackageTaskStatusSeverity.Warning
+			});
+
+			if (!hasSafeArea && widgetCount > 0)
+			{
+				lines.Add(new PackageTaskStatusLine
+				{
+					Message = "SafeArea missing on active canvas",
+					Severity = PackageTaskStatusSeverity.Warning
+				});
+			}
 		}
 
 		public IReadOnlyList<string> GetTier1ContractTypeNames()

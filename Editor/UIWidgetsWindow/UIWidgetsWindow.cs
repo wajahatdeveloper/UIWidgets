@@ -1,3 +1,4 @@
+using FoundationPlatform.Utilities.Menus;
 using UnityEditor;
 using UnityEngine;
 
@@ -19,8 +20,8 @@ namespace UIWidgets.Editor
 		private bool useAutoNaming = false;
 		private string searchQuery = string.Empty;
 
-		[MenuItem("Window/UIWidgets/UI Widgets...", false, 1101)]
-		[MenuItem("GameObject/UIWidgets/Open UI Widgets Window...", false, 0)]
+		[MenuItem(MenuPaths.UIWidgets.WidgetsWindow, false, 1101)]
+		[MenuItem(MenuPaths.UIWidgets.GameObjectOpen, false, 0)]
 		public static void Init()
 		{
 			var window = GetWindow<UIWidgets>();
