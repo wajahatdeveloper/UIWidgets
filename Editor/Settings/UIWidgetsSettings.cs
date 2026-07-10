@@ -25,6 +25,9 @@ namespace UIWidgets.Editor
 		}
 
 		[SerializeField] bool scenePickerEnabled = true;
+	[SerializeField] bool canvasDragDropEnabled = true;
+	[SerializeField] bool dragDropSelectsCreated = true;
+	[SerializeField] bool dragDropSetNativeSize = true;
 		[SerializeField] PickerMouseButton pickerMouseButton = PickerMouseButton.Right;
 		[SerializeField] EventModifiers pickerModifiers = EventModifiers.None;
 		[SerializeField] float pickerDragThreshold = 6f;
@@ -36,6 +39,26 @@ namespace UIWidgets.Editor
 		{
 			get => scenePickerEnabled;
 			set => Set(ref scenePickerEnabled, value);
+		}
+
+		/// <summary>Drop a Sprite/Texture/UI-prefab from the Project window onto a Canvas in the Scene View.</summary>
+		public bool CanvasDragDropEnabled
+		{
+			get => canvasDragDropEnabled;
+			set => Set(ref canvasDragDropEnabled, value);
+		}
+
+		public bool DragDropSelectsCreated
+		{
+			get => dragDropSelectsCreated;
+			set => Set(ref dragDropSelectsCreated, value);
+		}
+
+		/// <summary>Apply SetNativeSize to created Image/RawImage elements.</summary>
+		public bool DragDropSetNativeSize
+		{
+			get => dragDropSetNativeSize;
+			set => Set(ref dragDropSetNativeSize, value);
 		}
 
 		public PickerMouseButton MouseButton

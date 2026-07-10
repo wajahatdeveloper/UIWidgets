@@ -78,6 +78,22 @@ namespace UIWidgets.Editor
 			}
 
 			EditorGUILayout.Space(12f);
+			EditorGUILayout.LabelField("Canvas Drag && Drop", EditorStyles.boldLabel);
+
+			settings.CanvasDragDropEnabled = EditorGUILayout.Toggle(
+				new GUIContent("Enabled", "Drop a Sprite (→ Image), Texture (→ RawImage) or UI prefab from the Project window onto a Canvas in the Scene View."),
+				settings.CanvasDragDropEnabled);
+
+			using (new EditorGUI.DisabledScope(!settings.CanvasDragDropEnabled))
+			{
+				settings.DragDropSelectsCreated = EditorGUILayout.Toggle(
+					new GUIContent("Select Created Element"), settings.DragDropSelectsCreated);
+				settings.DragDropSetNativeSize = EditorGUILayout.Toggle(
+					new GUIContent("Set Native Size", "Size created Image/RawImage elements to their texture."),
+					settings.DragDropSetNativeSize);
+			}
+
+			EditorGUILayout.Space(12f);
 			EditorGUILayout.LabelField("UIWidgets Window (per-user)", EditorStyles.boldLabel);
 
 			PrefToggle("UIWidgets.IsInstantiatingPrefab", "Instantiate As Prefab", true);
