@@ -1,6 +1,6 @@
 {
     "name": "UIWidgets.Editor",
-    "rootNamespace": "",
+    "rootNamespace": "AetherNexus.UIWidgets.Editor",
     "references": [
         "Unity.TextMeshPro",
         "UniTask",

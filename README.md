@@ -1,6 +1,6 @@
 # UI Widgets
 
-General-purpose Unity UGUI widget library. Built on [FoundationPlatform](https://openupm.com/packages/com.homam.foundationplatform/).
+General-purpose Unity UGUI widget library. Built on Foundation Platform (`com.aethernexus.foundationplatform`).
 
 ## What's inside
 
@@ -19,18 +19,15 @@ General-purpose Unity UGUI widget library. Built on [FoundationPlatform](https:/
 
 ## Install
 
-Released standalone via [OpenUPM](https://openupm.com/) at `com.homam.uiwidgets`:
+Package id: `com.aethernexus.uiwidgets` (publisher: AetherNexus). Intended as free Asset Store UPM. Depends on Foundation Platform + UniTask.
 
-```
-openupm add com.homam.uiwidgets
-```
+See [Documentation~/PUBLISHING.md](Documentation~/PUBLISHING.md) for Asset Store UPM checklist and UniTask (5.2.c) notes.
 
-Pulls its `com.homam.foundationplatform` + UniTask dependencies from the OpenUPM scoped registry automatically. See [openupm.com/docs/getting-started.html](https://openupm.com/docs/getting-started.html).
+Licensing: MIT — see `LICENSE.md`. Third-party: UniTask (MIT) — see `Third-Party Notices.txt`.
 
 ## Dependencies
 
-- `com.homam.foundationplatform` 1.0.0
-- `com.cysharp.unitask` 2.3.3
+- `com.aethernexus.foundationplatform` 1.0.0 (includes embedded UniTask)
 - `com.unity.inputsystem` 1.18.0
 - `com.unity.ugui` 2.0.0 (includes TextMeshPro on Unity 6)
 

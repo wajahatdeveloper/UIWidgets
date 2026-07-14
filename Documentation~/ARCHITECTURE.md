@@ -1,6 +1,6 @@
 # UI Widgets Architecture
 
-General-purpose Unity UGUI widget library. Depends only on `com.homam.foundationplatform` (+ TextMeshPro / Input System / UniTask). Game-specific widgets are **not** part of this package — they live in their own gameplay frameworks and consume these widgets.
+General-purpose Unity UGUI widget library. Depends only on `com.aethernexus.foundationplatform` (+ TextMeshPro / Input System / UniTask). Game-specific widgets are **not** part of this package — they live in their own gameplay frameworks and consume these widgets.
 
 ---
 

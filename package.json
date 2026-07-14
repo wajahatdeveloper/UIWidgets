@@ -1,23 +1,24 @@
 {
-  "name": "com.homam.uiwidgets",
+  "name": "com.aethernexus.uiwidgets",
   "version": "1.0.0",
   "displayName": "UI Widgets",
-  "description": "General-purpose Unity UGUI widget library: modal dialogs, virtualized scroll lists, enhanced buttons (ButtonX), context menus, tabs, sliders, card UI, tooltips, toasts, procedural graphic primitives, UI effects, and an in-house layout engine (LayoutX). Built on FoundationPlatform.",
+  "description": "General-purpose Unity UGUI widget library: modal dialogs, virtualized scroll lists, enhanced buttons (ButtonX), context menus, tabs, sliders, card UI, tooltips, toasts, procedural graphic primitives, UI effects, and an in-house layout engine (LayoutX). Built on Foundation Platform (com.aethernexus.foundationplatform).\n\nRequires Foundation Platform (which embeds Cysharp UniTask). Asset uses UniTask under the MIT license; see Foundation Platform Third-Party Notices.txt for details.\n\nRequires Unity Input System and uGUI.",
   "unity": "6000.3",
+  "unityRelease": "10f1",
   "keywords": [
     "ui",
     "ugui",
     "widgets",
     "dialog",
     "scrolllist",
-    "layout"
+    "layout",
+    "aethernexus"
   ],
   "author": {
-    "name": "HOMAM"
+    "name": "AetherNexus"
   },
   "dependencies": {
-    "com.homam.foundationplatform": "1.0.0",
-    "com.cysharp.unitask": "2.3.3",
+    "com.aethernexus.foundationplatform": "1.0.0",
     "com.unity.inputsystem": "1.18.0",
     "com.unity.ugui": "2.0.0"
   },

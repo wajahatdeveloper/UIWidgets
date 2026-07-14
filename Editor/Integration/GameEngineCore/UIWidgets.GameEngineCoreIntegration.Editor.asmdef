@@ -1,6 +1,6 @@
 {
     "name": "UIWidgets.GameEngineCoreIntegration.Editor",
-    "rootNamespace": "",
+    "rootNamespace": "AetherNexus.UIWidgets.Editor",
     "references": [
         "UIWidgets.Runtime",
         "UIWidgets.Editor",

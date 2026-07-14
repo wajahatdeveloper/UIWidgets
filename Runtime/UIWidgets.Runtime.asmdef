@@ -1,6 +1,6 @@
 {
     "name": "UIWidgets.Runtime",
-    "rootNamespace": "",
+    "rootNamespace": "AetherNexus.UIWidgets",
     "references": [
         "Unity.TextMeshPro",
         "Unity.InputSystem",

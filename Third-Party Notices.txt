@@ -1,0 +1,28 @@
+Third-Party Notices
+===================
+
+This package depends on Foundation Platform, which embeds third-party code.
+
+-------------------------------------------------------------------------------
+UniTask (via Foundation Platform)
+-------------------------------------------------------------------------------
+Component Name: UniTask
+License Type: MIT
+Copyright: Copyright (c) 2019 Yoshifumi Kawai / Cysharp, Inc.
+Provided by: com.aethernexus.foundationplatform
+  (Runtime/ThirdParty/UniTask/, Editor/ThirdParty/UniTask/)
+
+See Foundation Platform’s Third-Party Notices.txt and
+Runtime/ThirdParty/UniTask/LICENSE.md for the full MIT text.
+
+-------------------------------------------------------------------------------
+Foundation Platform (com.aethernexus.foundationplatform)
+-------------------------------------------------------------------------------
+Required sibling AetherNexus package. See that package’s LICENSE.md.
+
+-------------------------------------------------------------------------------
+Unity packages
+-------------------------------------------------------------------------------
+This package also depends on official Unity packages declared in package.json
+(for example com.unity.inputsystem and com.unity.ugui). Those components are
+governed by Unity’s own terms.
