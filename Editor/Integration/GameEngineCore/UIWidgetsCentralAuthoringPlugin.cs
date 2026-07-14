@@ -2,11 +2,11 @@
 using System;
 using System.Collections.Generic;
 using AetherNexus.FoundationPlatform.Utilities.Menus;
-using GameEngineCore.Editor;
+using AetherNexus.GameEngineCore.Editor;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using static GameEngineCore.Editor.PackageWorkflowBuilder;
+using static AetherNexus.GameEngineCore.Editor.PackageWorkflowBuilder;
 
 namespace AetherNexus.UIWidgets.Editor
 {
