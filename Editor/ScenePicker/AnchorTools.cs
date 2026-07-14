@@ -9,7 +9,7 @@ namespace UIWidgets.Editor
 	/// </summary>
 	public static class AnchorTools
 	{
-		[MenuItem("Tools/UIWidgets/Fit Anchors &o", false, 901)]
+		[MenuItem(FoundationPlatform.Utilities.Menus.MenuPaths.UIWidgetsContext.FitAnchors, false, 901)]
 		public static void FitAnchorsToCorners()
 		{
 			foreach (var go in Selection.gameObjects)

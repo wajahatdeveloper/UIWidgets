@@ -11,7 +11,7 @@ namespace UIWidgets.Editor
 	[InitializeOnLoad]
 	public static class ScenePickerTrigger
 	{
-		const string MenuPath = "Tools/UIWidgets/Scene Picker Enabled";
+		const string MenuPath = FoundationPlatform.Utilities.Menus.MenuPaths.UIWidgetsTools.ScenePickerEnabled;
 		const EventModifiers RelevantModifiers = EventModifiers.Shift | EventModifiers.Control | EventModifiers.Alt;
 
 		static Vector2 downPosition;
@@ -52,7 +52,7 @@ namespace UIWidgets.Editor
 			return true;
 		}
 
-		[MenuItem("Tools/UIWidgets/Settings...", false, 902)]
+		[MenuItem(FoundationPlatform.Utilities.Menus.MenuPaths.UIWidgetsTools.Settings, false, 902)]
 		static void OpenSettings() => SettingsService.OpenProjectSettings("Project/UIWidgets");
 
 		static bool InputMatches(Event evt)
