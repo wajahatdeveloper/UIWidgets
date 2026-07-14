@@ -1,6 +1,6 @@
 #if UNITY_EDITOR
 using System.Collections.Generic;
-using FoundationPlatform.FrameworkInspector.Editor;
+using AetherNexus.FoundationPlatform.FrameworkInspector.Editor;
 using UnityEditor;
 using UnityEngine;
 

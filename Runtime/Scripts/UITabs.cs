@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using FoundationPlatform.FrameworkInspector;
+using AetherNexus.FoundationPlatform.FrameworkInspector;
 using UnityEngine;
 using UnityEngine.Events;
 

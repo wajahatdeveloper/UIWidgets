@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using FoundationPlatform.DebugX;
+using AetherNexus.FoundationPlatform.DebugX;
 using UnityEngine;
 
 namespace UIWidgets

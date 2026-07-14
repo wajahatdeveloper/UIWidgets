@@ -2,7 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
-using FoundationPlatform.DebugX;
+using AetherNexus.FoundationPlatform.DebugX;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;

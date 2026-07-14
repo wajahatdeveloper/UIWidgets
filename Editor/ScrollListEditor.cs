@@ -1,4 +1,4 @@
-using FoundationPlatform.FrameworkInspector.Editor;
+using AetherNexus.FoundationPlatform.FrameworkInspector.Editor;
 using UnityEditor;
 using UnityEngine;
 

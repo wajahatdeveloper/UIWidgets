@@ -1,4 +1,4 @@
-using FoundationPlatform.DebugX;
+using AetherNexus.FoundationPlatform.DebugX;
 using UnityEngine;
 using UnityEngine.UI;
 

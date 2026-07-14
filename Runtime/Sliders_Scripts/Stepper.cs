@@ -1,6 +1,6 @@
 using System;
 using System.Collections;
-using FoundationPlatform.DebugX;
+using AetherNexus.FoundationPlatform.DebugX;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;

@@ -1,5 +1,5 @@
 using System;
-using FoundationPlatform.DebugX;
+using AetherNexus.FoundationPlatform.DebugX;
 using UnityEngine;
 
 namespace UIWidgets

@@ -2,8 +2,8 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using FoundationPlatform.DebugX;
-using FoundationPlatform.FrameworkInspector;
+using AetherNexus.FoundationPlatform.DebugX;
+using AetherNexus.FoundationPlatform.FrameworkInspector;
 using UnityEngine;
 using UnityEngine.UI;
 
