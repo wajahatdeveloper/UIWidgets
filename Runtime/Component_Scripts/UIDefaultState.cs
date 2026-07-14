@@ -1,6 +1,7 @@
 #if UNITY_EDITOR
 using System.Collections.Generic;
 using AetherNexus.FoundationPlatform.DebugX;
+using AetherNexus.FoundationPlatform.Extensions;
 using AetherNexus.FoundationPlatform.FrameworkInspector;
 using UnityEditor.SceneManagement;
 using UnityEngine;

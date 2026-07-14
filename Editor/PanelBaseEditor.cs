@@ -2,6 +2,7 @@
 using System;
 using System.IO;
 using System.Text;
+using AetherNexus.FoundationPlatform.Editor.Windows;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEditor.Compilation;

@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using AetherNexus.FoundationPlatform;
 using AetherNexus.FoundationPlatform.DebugX;
 using AetherNexus.FoundationPlatform.FrameworkInspector;
 using UnityEngine;

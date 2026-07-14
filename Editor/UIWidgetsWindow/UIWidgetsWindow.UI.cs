@@ -1,5 +1,6 @@
 using System.Linq;
 using AetherNexus.FoundationPlatform.DebugX;
+using AetherNexus.FoundationPlatform.Extensions;
 using TMPro;
 using UnityEditor;
 using UnityEngine;
