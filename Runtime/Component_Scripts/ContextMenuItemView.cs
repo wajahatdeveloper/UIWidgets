@@ -2,7 +2,7 @@ using System;
 using AetherNexus.FoundationPlatform.DebugX;
 using UnityEngine;
 
-namespace UIWidgets
+namespace AetherNexus.UIWidgets
 {
     [DisallowMultipleComponent]
     public sealed class ContextMenuItemView : MonoBehaviour

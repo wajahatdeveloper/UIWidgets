@@ -5,7 +5,7 @@ using UnityEditor.UIElements;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-namespace UIWidgets.Editor
+namespace AetherNexus.UIWidgets.Editor
 {
 	/// <summary>
 	/// UIToolkit dropdown listing the objects under the cursor, front to back.

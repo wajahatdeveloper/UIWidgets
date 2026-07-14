@@ -7,7 +7,7 @@ using System.Text;
 using UnityEditor;
 using UnityEngine;
 
-namespace UIWidgets.Editor
+namespace AetherNexus.UIWidgets.Editor
 {
 	[Serializable]
 	internal class AutoUIRefsAttachField

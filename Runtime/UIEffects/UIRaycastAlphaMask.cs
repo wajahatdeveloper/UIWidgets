@@ -2,7 +2,7 @@ using AetherNexus.FoundationPlatform.DebugX;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace UIWidgets
+namespace AetherNexus.UIWidgets
 {
     /// <summary>
     /// Per-pixel raycast filtering for an <see cref="Image"/>: pointer events only register where

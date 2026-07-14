@@ -1,7 +1,7 @@
 using UnityEditor;
 using UnityEngine;
 
-namespace UIWidgets.Editor
+namespace AetherNexus.UIWidgets.Editor
 {
 	/// <summary>
 	/// Tints the Hierarchy row of the GameObject a palette tile would spawn under, so designers see

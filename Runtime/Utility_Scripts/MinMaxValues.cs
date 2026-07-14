@@ -1,6 +1,6 @@
 using System;
 
-namespace UIWidgets
+namespace AetherNexus.UIWidgets
 {
     /// <summary>
     /// Serializable min/max value pair constrained to an outer limit range.

@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace UIWidgets
+namespace AetherNexus.UIWidgets
 {
     /// <summary>
     /// Tints the attached <see cref="Graphic"/>'s vertices along a gradient. The gradient runs

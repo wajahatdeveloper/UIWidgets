@@ -5,7 +5,7 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace UIWidgets.Editor
+namespace AetherNexus.UIWidgets.Editor
 {
     /// <summary>
     /// Editor tool to migrate legacy UnityEngine.UI.Text components to TextMeshProUGUI.

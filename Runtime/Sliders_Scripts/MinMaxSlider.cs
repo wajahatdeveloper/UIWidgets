@@ -6,7 +6,7 @@ using UnityEngine.Events;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-namespace UIWidgets
+namespace AetherNexus.UIWidgets
 {
     /// <summary>
     /// Dual-handle slider that selects a [min..max] window out of a limit range.

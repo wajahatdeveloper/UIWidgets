@@ -10,7 +10,7 @@ using UnityEngine.UIElements;
 using UIEButton = UnityEngine.UIElements.Button;
 using UIEImage = UnityEngine.UIElements.Image;
 
-namespace UIWidgets.Editor
+namespace AetherNexus.UIWidgets.Editor
 {
 	/// <summary>
 	/// UIElements view for the palette: an icon-tile grid grouped by category, a live search, a

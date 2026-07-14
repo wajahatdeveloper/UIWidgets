@@ -5,7 +5,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace UIWidgets
+namespace AetherNexus.UIWidgets
 {
    public class ToastUI : PersistentSingletonBehaviour<ToastUI> {
       [Header ("UI References :")]

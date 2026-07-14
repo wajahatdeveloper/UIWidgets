@@ -3,7 +3,7 @@ using AetherNexus.FoundationPlatform.DebugX;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-namespace UIWidgets
+namespace AetherNexus.UIWidgets
 {
     [RequireComponent(typeof(RectTransform))]
     public class TooltipTrigger : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, ISelectHandler, IDeselectHandler

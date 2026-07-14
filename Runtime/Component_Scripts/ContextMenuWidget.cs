@@ -6,7 +6,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-namespace UIWidgets
+namespace AetherNexus.UIWidgets
 {
     public enum ContextMenuPlacementMode
     {

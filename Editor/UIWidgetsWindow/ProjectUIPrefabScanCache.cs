@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
-namespace UIWidgets.Editor
+namespace AetherNexus.UIWidgets.Editor
 {
 	/// <summary>
 	/// Cached scan of prefab assets whose root GameObject is on Unity's UI layer.

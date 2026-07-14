@@ -8,7 +8,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using static GameEngineCore.Editor.PackageWorkflowBuilder;
 
-namespace UIWidgets.Editor
+namespace AetherNexus.UIWidgets.Editor
 {
 	/// <summary>
 	/// Contributes a UIWidgets setup workflow to CentralAuthoring without

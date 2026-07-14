@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using AetherNexus.FoundationPlatform.DebugX;
 using UnityEngine;
 
-namespace UIWidgets
+namespace AetherNexus.UIWidgets
 {
     [Serializable]
     public class PopupTextAnimationSettings

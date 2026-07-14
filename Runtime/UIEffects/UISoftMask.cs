@@ -2,7 +2,7 @@ using AetherNexus.FoundationPlatform.DebugX;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace UIWidgets
+namespace AetherNexus.UIWidgets
 {
     /// <summary>
     /// Fades the attached <see cref="Graphic"/> through the alpha channel of a mask texture,

@@ -6,7 +6,7 @@ using UnityEngine.Events;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-namespace UIWidgets
+namespace AetherNexus.UIWidgets
 {
     [RequireComponent(typeof(Image))]
     [AddComponentMenu("UI/Extensions/Sliders/Radial Slider")]

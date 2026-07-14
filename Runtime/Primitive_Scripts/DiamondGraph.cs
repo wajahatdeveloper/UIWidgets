@@ -2,7 +2,7 @@ using System;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace UIWidgets
+namespace AetherNexus.UIWidgets
 {
     [AddComponentMenu("UI/Extensions/Primitives/Diamond Graph")]
     public class DiamondGraph : UIPrimitiveBase

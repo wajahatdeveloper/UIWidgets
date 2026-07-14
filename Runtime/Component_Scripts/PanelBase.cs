@@ -3,7 +3,7 @@ using AetherNexus.FoundationPlatform.DebugX;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-namespace UIWidgets
+namespace AetherNexus.UIWidgets
 {
     /// <summary>
     /// A component to identify and interfere with Panel gameObjects.

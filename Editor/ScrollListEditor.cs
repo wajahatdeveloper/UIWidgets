@@ -2,7 +2,7 @@ using AetherNexus.FoundationPlatform.FrameworkInspector.Editor;
 using UnityEditor;
 using UnityEngine;
 
-namespace UIWidgets.Editor
+namespace AetherNexus.UIWidgets.Editor
 {
     [CustomEditor(typeof(ScrollList), true)]
     [CanEditMultipleObjects]

@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace UIWidgets
+namespace AetherNexus.UIWidgets
 {
 	/// <summary>
 	///  Base class for scene-specific view roots.

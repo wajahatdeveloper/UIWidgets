@@ -6,7 +6,7 @@ using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-namespace UIWidgets
+namespace AetherNexus.UIWidgets
 {
     [ExecuteInEditMode]
     public class UIDefaultState : MonoBehaviour

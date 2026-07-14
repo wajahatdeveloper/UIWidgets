@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace UIWidgets
+namespace AetherNexus.UIWidgets
 {
    public enum ToastColor {
       Black,

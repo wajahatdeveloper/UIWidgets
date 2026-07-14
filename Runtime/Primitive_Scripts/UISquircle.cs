@@ -6,7 +6,7 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace UIWidgets
+namespace AetherNexus.UIWidgets
 {
     [AddComponentMenu("UI/Extensions/Primitives/Squircle")]
     public class UISquircle : UIPrimitiveBase

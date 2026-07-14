@@ -3,7 +3,7 @@ using AetherNexus.FoundationPlatform.DebugX;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace UIWidgets
+namespace AetherNexus.UIWidgets
 {
 	/// <summary>
 	/// Minimal modal-panel coordinator. Exactly one modal is visible at a time; showing a new

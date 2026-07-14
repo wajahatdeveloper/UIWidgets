@@ -3,7 +3,7 @@ using AetherNexus.FoundationPlatform.FrameworkInspector;
 using UnityEngine;
 using UnityEngine.Events;
 
-namespace UIWidgets
+namespace AetherNexus.UIWidgets
 {
 	public class UITabs : MonoBehaviour
 	{

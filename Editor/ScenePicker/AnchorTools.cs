@@ -1,7 +1,7 @@
 using UnityEditor;
 using UnityEngine;
 
-namespace UIWidgets.Editor
+namespace AetherNexus.UIWidgets.Editor
 {
 	/// <summary>
 	/// RectTransform anchor helpers. "Fit" moves the anchors onto the rect's current corners

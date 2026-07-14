@@ -2,7 +2,7 @@ using AetherNexus.FoundationPlatform.DebugX;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace UIWidgets
+namespace AetherNexus.UIWidgets
 {
     /// <summary>
     /// Filters UI raycasts based on the alpha value of the underlying <see cref="Image"/> sprite.

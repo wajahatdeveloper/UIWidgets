@@ -1,4 +1,4 @@
-namespace UIWidgets
+namespace AetherNexus.UIWidgets
 {
     public abstract class ScrollItemView<T> : ScrollItemView, IListItemBinder where T : class
     {

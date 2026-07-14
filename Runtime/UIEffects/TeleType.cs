@@ -3,7 +3,7 @@ using AetherNexus.FoundationPlatform.DebugX;
 using TMPro;
 using UnityEngine;
 
-namespace UIWidgets
+namespace AetherNexus.UIWidgets
 {
     public class TeleType : MonoBehaviour
     {

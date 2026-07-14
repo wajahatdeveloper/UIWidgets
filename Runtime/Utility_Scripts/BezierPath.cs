@@ -16,7 +16,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace UIWidgets
+namespace AetherNexus.UIWidgets
 {
     /**
         Class for representing a Bezier path, and methods for getting suitable points to 

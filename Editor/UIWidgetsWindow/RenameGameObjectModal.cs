@@ -1,7 +1,7 @@
 using UnityEditor;
 using UnityEngine;
 
-namespace UIWidgets.Editor
+namespace AetherNexus.UIWidgets.Editor
 {
 	public class RenameGameObjectModal : EditorWindow
 	{

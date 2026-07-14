@@ -15,7 +15,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace UIWidgets
+namespace AetherNexus.UIWidgets
 {
     [AddComponentMenu("UI/Extensions/Primitives/UI Circle")]
     public class UICircle : UIPrimitiveBase

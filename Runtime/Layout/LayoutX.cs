@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace UIWidgets
+namespace AetherNexus.UIWidgets
 {
 	/// <summary>
 	/// Single layout component covering flow ("compact") and uniform-cell ("grid") arrangements

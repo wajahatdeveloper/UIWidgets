@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace UIWidgets
+namespace AetherNexus.UIWidgets
 {
     /// <summary>
     /// Shareable Toast color set indexed by the ToastColor enum order. Assign one on a ToastUI to swap the whole

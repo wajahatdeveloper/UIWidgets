@@ -3,7 +3,7 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace UIWidgets.Editor
+namespace AetherNexus.UIWidgets.Editor
 {
 	[CustomPropertyDrawer(typeof(ButtonReference))]
 	public class ButtonReferenceDrawer : PropertyDrawer

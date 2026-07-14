@@ -4,7 +4,7 @@ using UnityEngine.Events;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-namespace UIWidgets
+namespace AetherNexus.UIWidgets
 {
     [RequireComponent(typeof(RectTransform))]
     [AddComponentMenu("UI/Extensions/Sliders/BoxSlider")]

@@ -1,6 +1,6 @@
 using UnityEditor;
 
-namespace UIWidgets.Editor
+namespace AetherNexus.UIWidgets.Editor
 {
 	/// <summary>
 	/// Shows only the fields relevant to the selected <see cref="LayoutX"/> mode and constraint.

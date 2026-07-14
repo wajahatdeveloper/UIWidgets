@@ -8,7 +8,7 @@ using UnityEditor.Compilation;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
-namespace UIWidgets.Editor
+namespace AetherNexus.UIWidgets.Editor
 {
 	[CustomEditor(typeof(PanelBase), true)]
 	[CanEditMultipleObjects]

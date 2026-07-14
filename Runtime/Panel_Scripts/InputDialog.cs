@@ -6,7 +6,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 #endif
 
-namespace UIWidgets
+namespace AetherNexus.UIWidgets
 {
     [System.Serializable]
     public class InputValidation

@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
 
-namespace UIWidgets
+namespace AetherNexus.UIWidgets
 {
 	/// <summary>
 	/// Wrapper class that allows Unity Inspector to accept both UnityEngine.UI.Button and UIWidgets.ButtonX types.

@@ -1,7 +1,7 @@
 using UnityEditor;
 using UnityEngine;
 
-namespace UIWidgets.Editor
+namespace AetherNexus.UIWidgets.Editor
 {
 	/// <summary>
 	/// Project Settings &gt; UIWidgets. Scene Picker input/appearance is project-wide

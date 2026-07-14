@@ -7,7 +7,7 @@ using AetherNexus.FoundationPlatform.FrameworkInspector;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace UIWidgets
+namespace AetherNexus.UIWidgets
 {
     [AddComponentMenu("UI/ScrollList")]
     public class ScrollList : MonoBehaviour, ISerializationCallbackReceiver

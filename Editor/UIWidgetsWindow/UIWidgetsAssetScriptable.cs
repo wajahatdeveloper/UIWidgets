@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace UIWidgets.Editor
+namespace AetherNexus.UIWidgets.Editor
 {
 	[CreateAssetMenu(fileName = "UIWidgetsAsset", menuName = "UI Widgets/Configuration", order = 45)]
 	public class UIWidgetsAssetScriptable : ScriptableObject

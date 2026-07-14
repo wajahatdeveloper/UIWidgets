@@ -1,7 +1,7 @@
 using System.Collections;
 using UnityEngine;
 
-namespace UIWidgets
+namespace AetherNexus.UIWidgets
 {
 
     public class CardStack2D : MonoBehaviour

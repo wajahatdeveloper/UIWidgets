@@ -1,4 +1,4 @@
-namespace UIWidgets
+namespace AetherNexus.UIWidgets
 {
     public interface IListItemBinder
     {

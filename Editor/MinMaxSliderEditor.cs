@@ -3,7 +3,7 @@ using UnityEditor;
 using UnityEditor.UI;
 using UnityEngine;
 
-namespace UIWidgets.Editor
+namespace AetherNexus.UIWidgets.Editor
 {
     [CustomEditor(typeof(MinMaxSlider), true)]
     [CanEditMultipleObjects]

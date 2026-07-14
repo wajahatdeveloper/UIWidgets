@@ -5,7 +5,7 @@
 
 using UnityEngine;
 
-namespace UIWidgets
+namespace AetherNexus.UIWidgets
 {
     internal static class SetPropertyUtility
     {

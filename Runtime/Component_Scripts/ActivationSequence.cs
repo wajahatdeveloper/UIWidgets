@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
-namespace UIWidgets
+namespace AetherNexus.UIWidgets
 {
 	public interface IActivatable
 	{

@@ -1,7 +1,7 @@
 using AetherNexus.FoundationPlatform.DebugX;
 using UnityEngine;
 
-namespace UIWidgets
+namespace AetherNexus.UIWidgets
 {
     /// <summary>
     /// Safe area implementation for notched mobile devices. Usage:

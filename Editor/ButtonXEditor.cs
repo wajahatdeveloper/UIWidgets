@@ -4,7 +4,7 @@ using AetherNexus.FoundationPlatform.FrameworkInspector.Editor;
 using UnityEditor;
 using UnityEngine;
 
-namespace UIWidgets.Editor
+namespace AetherNexus.UIWidgets.Editor
 {
 	/// <summary>
 	/// Custom inspector for <see cref="ButtonX"/>. Because ButtonX derives from

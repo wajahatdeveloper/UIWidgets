@@ -1,7 +1,7 @@
 using UnityEditor;
 using UnityEngine;
 
-namespace UIWidgets.Editor
+namespace AetherNexus.UIWidgets.Editor
 {
 	/// <summary>
 	/// Project-wide UIWidgets editor settings, stored in ProjectSettings/UIWidgetsSettings.asset

@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.SceneManagement;
 
-namespace UIWidgets
+namespace AetherNexus.UIWidgets
 {
     public class WaitPanel : SingletonBehaviour<WaitPanel>
     {

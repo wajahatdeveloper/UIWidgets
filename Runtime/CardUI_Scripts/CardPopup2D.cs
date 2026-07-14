@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace UIWidgets
+namespace AetherNexus.UIWidgets
 {
 
 [RequireComponent(typeof(Rigidbody))]

@@ -1,7 +1,7 @@
 using UnityEditor;
 using UnityEditor.UI;
 
-namespace UIWidgets.Editor
+namespace AetherNexus.UIWidgets.Editor
 {
     [CustomEditor(typeof(BoxSlider), true)]
 	[CanEditMultipleObjects]

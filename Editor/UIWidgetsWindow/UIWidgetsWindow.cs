@@ -2,7 +2,7 @@ using AetherNexus.FoundationPlatform.Utilities.Menus;
 using UnityEditor;
 using UnityEngine;
 
-namespace UIWidgets.Editor
+namespace AetherNexus.UIWidgets.Editor
 {
 	public partial class UIWidgets : EditorWindow
 	{
