@@ -5,7 +5,7 @@ using UnityEngine;
 namespace AetherNexus.UIWidgets
 {
     /// <summary>Play Mode harness for <see cref="Fader"/>.</summary>
-    public class FaderTest : MonoBehaviour
+    public class FaderTest : MonoBehaviour, IDemoImguiHarness
     {
         [Header("Test Configuration")]
         public bool testOnStart;
@@ -65,12 +65,8 @@ namespace AetherNexus.UIWidgets
             Fader.Instance.CancelCurrentFade();
         }
 
-        private void OnGUI()
+        public void DrawImgui(ref float y)
         {
-            if (!UIWidgetsDemoImgui.IsSection(UIWidgetsDemoImgui.Section.Modals))
-                return;
-
-            float y = UIWidgetsDemoImgui.ContentY + 160f;
             if (UIWidgetsDemoImgui.Button(ref y, "Fade In")) TestFadeToBlack();
             if (UIWidgetsDemoImgui.Button(ref y, "Fade Out")) TestFadeFromBlack();
             if (UIWidgetsDemoImgui.Button(ref y, "RoundTrip")) TestFadeRoundTrip();

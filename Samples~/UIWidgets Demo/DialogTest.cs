@@ -5,7 +5,7 @@ using UnityEngine;
 namespace AetherNexus.UIWidgets
 {
     /// <summary>Play Mode harness for <see cref="Dialog"/> layouts and callbacks.</summary>
-    public class DialogTest : MonoBehaviour
+    public class DialogTest : MonoBehaviour, IDemoImguiHarness
     {
         [Header("Test Configuration")]
         public bool testOnStart;
@@ -69,12 +69,8 @@ namespace AetherNexus.UIWidgets
                 .ShowWithLayout();
         }
 
-        private void OnGUI()
+        public void DrawImgui(ref float y)
         {
-            if (!UIWidgetsDemoImgui.IsSection(UIWidgetsDemoImgui.Section.Modals))
-                return;
-
-            float y = UIWidgetsDemoImgui.ContentY;
             if (UIWidgetsDemoImgui.Button(ref y, "Dlg Ok")) TestOk();
             if (UIWidgetsDemoImgui.Button(ref y, "Dlg YesNo")) TestYesNo();
             if (UIWidgetsDemoImgui.Button(ref y, "Dlg OkCancel")) TestOkCancel();

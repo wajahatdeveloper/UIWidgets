@@ -5,7 +5,7 @@ using UnityEngine;
 namespace AetherNexus.UIWidgets
 {
 	/// <summary>Play Mode harness for <see cref="UITabs"/>.</summary>
-	public class TabsTest : MonoBehaviour
+	public class TabsTest : MonoBehaviour, IDemoImguiHarness
 	{
 		[Tooltip("Assign or let DemoGalleryBootstrap spawn Demo_Tabs.")]
 		public UITabs tabs;
@@ -47,12 +47,8 @@ namespace AetherNexus.UIWidgets
 			DebugX.Logger(LogChannels.UI).Info("[UI:INFO:Test] UITabs select {Index}.", index);
 		}
 
-		private void OnGUI()
+		public void DrawImgui(ref float y)
 		{
-			if (!UIWidgetsDemoImgui.IsSection(UIWidgetsDemoImgui.Section.Lists))
-				return;
-
-			float y = UIWidgetsDemoImgui.ContentY + 110f;
 			UIWidgetsDemoImgui.Label(ref y, tabs != null ? tabs.name : "no Tabs");
 			if (UIWidgetsDemoImgui.Button(ref y, "Tab 0")) TestTab0();
 			if (UIWidgetsDemoImgui.Button(ref y, "Tab 1")) TestTab1();

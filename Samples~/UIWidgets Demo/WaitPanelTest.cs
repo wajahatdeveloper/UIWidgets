@@ -5,7 +5,7 @@ using UnityEngine;
 namespace AetherNexus.UIWidgets
 {
     /// <summary>Play Mode harness for <see cref="WaitPanel"/>.</summary>
-    public class WaitPanelTest : MonoBehaviour
+    public class WaitPanelTest : MonoBehaviour, IDemoImguiHarness
     {
         [Header("Test Configuration")]
         public bool testOnStart;
@@ -77,12 +77,8 @@ namespace AetherNexus.UIWidgets
             WaitPanel.Instance.HideCounted();
         }
 
-        private void OnGUI()
+        public void DrawImgui(ref float y)
         {
-            if (!UIWidgetsDemoImgui.IsSection(UIWidgetsDemoImgui.Section.Modals))
-                return;
-
-            float y = UIWidgetsDemoImgui.ContentY + 390f;
             if (UIWidgetsDemoImgui.Button(ref y, "Wait show")) TestShow();
             if (UIWidgetsDemoImgui.Button(ref y, "Wait hide")) TestHide();
             if (UIWidgetsDemoImgui.Button(ref y, "Wait +")) TestShowCounted();

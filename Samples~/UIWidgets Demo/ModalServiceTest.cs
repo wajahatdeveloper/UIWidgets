@@ -9,7 +9,7 @@ namespace AetherNexus.UIWidgets
     /// Assign a scene <see cref="PanelBase"/> (e.g. Containers/Panel). Dialog/InputDialog are
     /// separate singletons and are not driven through ModalService.
     /// </summary>
-    public class ModalServiceTest : MonoBehaviour
+    public class ModalServiceTest : MonoBehaviour, IDemoImguiHarness
     {
         [Header("Test Configuration")]
         [Tooltip("Any PanelBase in the scene (Create via GameObject → UI (Canvas) → Panel Base).")]
@@ -75,12 +75,8 @@ namespace AetherNexus.UIWidgets
             demoPanel.Show();
         }
 
-        private void OnGUI()
+        public void DrawImgui(ref float y)
         {
-            if (!UIWidgetsDemoImgui.IsSection(UIWidgetsDemoImgui.Section.Modals))
-                return;
-
-            float y = UIWidgetsDemoImgui.ContentY + 480f;
             if (UIWidgetsDemoImgui.Button(ref y, "Modal show")) TestShow();
             if (UIWidgetsDemoImgui.Button(ref y, "Modal hide")) TestHideCurrent();
             if (UIWidgetsDemoImgui.Button(ref y, "Panel.Show")) TestShowViaPanel();

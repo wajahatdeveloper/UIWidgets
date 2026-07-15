@@ -5,7 +5,7 @@ using UnityEngine;
 namespace AetherNexus.UIWidgets
 {
 	/// <summary>Play Mode harness for <see cref="LayoutX"/>.</summary>
-	public class LayoutXTest : MonoBehaviour
+	public class LayoutXTest : MonoBehaviour, IDemoImguiHarness
 	{
 		[Tooltip("Assign or let DemoGalleryBootstrap create Demo_LayoutX.")]
 		public LayoutX layoutX;

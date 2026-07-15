@@ -6,7 +6,7 @@ using UnityEngine;
 namespace AetherNexus.UIWidgets
 {
 	/// <summary>Play Mode harness for <see cref="ScrollList"/> + <see cref="ScrollListItemData"/>.</summary>
-	public class ScrollListTest : MonoBehaviour
+	public class ScrollListTest : MonoBehaviour, IDemoImguiHarness
 	{
 		[Tooltip("Assign or let DemoGalleryBootstrap spawn Demo_ScrollList.")]
 		public ScrollList scrollList;
@@ -62,12 +62,8 @@ namespace AetherNexus.UIWidgets
 			scrollList.ClearAllItems();
 		}
 
-		private void OnGUI()
+		public void DrawImgui(ref float y)
 		{
-			if (!UIWidgetsDemoImgui.IsSection(UIWidgetsDemoImgui.Section.Lists))
-				return;
-
-			float y = UIWidgetsDemoImgui.ContentY;
 			UIWidgetsDemoImgui.Label(ref y, scrollList != null ? scrollList.name : "no ScrollList");
 			if (UIWidgetsDemoImgui.Button(ref y, "SL Bind")) TestBind();
 			if (UIWidgetsDemoImgui.Button(ref y, "SL Filter")) TestFilter();

@@ -5,7 +5,7 @@ using UnityEngine;
 namespace AetherNexus.UIWidgets
 {
 	/// <summary>Play Mode harness for <see cref="PopupText"/>.</summary>
-	public class PopupTextTest : MonoBehaviour
+	public class PopupTextTest : MonoBehaviour, IDemoImguiHarness
 	{
 		[Tooltip("Optional world anchor. If empty, spawns at screen center in front of the main camera.")]
 		public Transform spawnAnchor;

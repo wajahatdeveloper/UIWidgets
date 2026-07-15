@@ -6,7 +6,7 @@ using UnityEngine;
 namespace AetherNexus.UIWidgets
 {
 	/// <summary>Play Mode harness for <see cref="ContextMenuWidget"/>.</summary>
-	public class ContextMenuTest : MonoBehaviour
+	public class ContextMenuTest : MonoBehaviour, IDemoImguiHarness
 	{
 		[ContextMenu("Show At Center")]
 		public void TestShowCenter()
@@ -41,12 +41,8 @@ namespace AetherNexus.UIWidgets
 		[ContextMenu("Hide All")]
 		public void TestHide() => ContextMenuWidget.HideAll();
 
-		private void OnGUI()
+		public void DrawImgui(ref float y)
 		{
-			if (!UIWidgetsDemoImgui.IsSection(UIWidgetsDemoImgui.Section.Feedback))
-				return;
-
-			float y = UIWidgetsDemoImgui.ContentY + 90f;
 			UIWidgetsDemoImgui.Label(ref y, ContextMenuWidget.HasInstance ? "CtxMenu ok" : "need CtxMenu");
 			if (UIWidgetsDemoImgui.Button(ref y, "Ctx Show")) TestShowCenter();
 			if (UIWidgetsDemoImgui.Button(ref y, "Ctx Hide")) TestHide();

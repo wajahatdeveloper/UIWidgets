@@ -35,7 +35,7 @@ Context menu → **Resolve Scene + Apply Visibility**.
 | Tab | What you exercise | Demo objects |
 |-----|-------------------|--------------|
 | **M** | Dialog, InputDialog, Fader, LineMessage, Loading, Wait, ModalService | `modalsSectionRoots` (optional) |
-| **B** | ButtonX, ButtonXToggleGroup | `Demo_ButtonX` + `Demo_ButtonXToggle` (3 mutual-exclusion buttons) |
+| **B** | ButtonX | ButtonX root enabled |
 | **L** | ScrollList, UITabs | list roots enabled |
 | **F** | Toast, ContextMenu, PopupText | feedback singletons enabled |
 | **X** | LayoutX | LayoutX root enabled |
@@ -44,6 +44,6 @@ Context menu → **Resolve Scene + Apply Visibility**.
 
 | Script | Role |
 |--------|------|
-| `DemoGalleryBootstrap` | Section tabs + show/hide scene roots |
-| `*Test.cs` | Play Mode harnesses (IMGUI + Context Menu) |
-| `UIWidgetsDemoImgui` | Shared rail layout |
+| `DemoGalleryBootstrap` | Section tabs + single OnGUI rail + show/hide scene roots |
+| `*Test.cs` | Play Mode harnesses (`DrawImgui` + Context Menu) |
+| `UIWidgetsDemoImgui` | Shared rail layout helpers |

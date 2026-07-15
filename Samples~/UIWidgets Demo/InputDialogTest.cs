@@ -5,7 +5,7 @@ using UnityEngine;
 namespace AetherNexus.UIWidgets
 {
     /// <summary>Play Mode harness for <see cref="InputDialog"/>.</summary>
-    public class InputDialogTest : MonoBehaviour
+    public class InputDialogTest : MonoBehaviour, IDemoImguiHarness
     {
         [Header("Test Configuration")]
         public bool testOnStart;
@@ -83,12 +83,8 @@ namespace AetherNexus.UIWidgets
                 .Show();
         }
 
-        private void OnGUI()
+        public void DrawImgui(ref float y)
         {
-            if (!UIWidgetsDemoImgui.IsSection(UIWidgetsDemoImgui.Section.Modals))
-                return;
-
-            float y = UIWidgetsDemoImgui.ContentY + 90f;
             if (UIWidgetsDemoImgui.Button(ref y, "Input")) TestInputDialog();
             if (UIWidgetsDemoImgui.Button(ref y, "Validate")) TestInputDialogWithValidation();
             if (UIWidgetsDemoImgui.Button(ref y, "Shortcuts")) TestKeyboardShortcuts();

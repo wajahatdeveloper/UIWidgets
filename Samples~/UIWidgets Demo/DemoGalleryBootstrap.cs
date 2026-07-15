@@ -4,7 +4,8 @@ using UnityEngine;
 namespace AetherNexus.UIWidgets
 {
 	/// <summary>
-	/// Draws section tabs and toggles scene demo roots so only the active section is visible.
+	/// Draws section tabs, left-rail IMGUI (single OnGUI — avoids multi-script control-ID bugs),
+	/// and toggles scene demo roots so only the active section is visible.
 	/// All gallery widgets / singletons are expected to already exist in the sample scene.
 	/// </summary>
 	public class DemoGalleryBootstrap : MonoBehaviour
@@ -25,14 +26,25 @@ namespace AetherNexus.UIWidgets
 		[SerializeField] private GameObject[] layoutSectionRoots;
 
 		[Header("Harness wiring")]
+		[SerializeField] private DialogTest dialogTest;
+		[SerializeField] private InputDialogTest inputDialogTest;
+		[SerializeField] private FaderTest faderTest;
+		[SerializeField] private LineMessageTest lineMessageTest;
+		[SerializeField] private LoadingPanelTest loadingPanelTest;
+		[SerializeField] private WaitPanelTest waitPanelTest;
+		[SerializeField] private ModalServiceTest modalServiceTest;
 		[SerializeField] private ButtonXTest buttonXTest;
 		[SerializeField] private ScrollListTest scrollListTest;
 		[SerializeField] private TabsTest tabsTest;
+		[SerializeField] private ToastTest toastTest;
+		[SerializeField] private ContextMenuTest contextMenuTest;
+		[SerializeField] private PopupTextTest popupTextTest;
 		[SerializeField] private LayoutXTest layoutXTest;
 
 		private void Awake()
 		{
 			ResolveSceneInstances();
+			ResolveHarnesses();
 			WireHarnesses();
 			CollectDefaultSectionRoots();
 			ApplySectionVisibility(UIWidgetsDemoImgui.CurrentSection);
@@ -43,12 +55,52 @@ namespace AetherNexus.UIWidgets
 			UIWidgetsDemoImgui.DrawSectionTabs();
 			if (UIWidgetsDemoImgui.ConsumeSectionChanged())
 				ApplySectionVisibility(UIWidgetsDemoImgui.CurrentSection);
+
+			float y = UIWidgetsDemoImgui.BeginContent();
+			switch (UIWidgetsDemoImgui.CurrentSection)
+			{
+				case UIWidgetsDemoImgui.Section.Modals:
+					DrawBlock(ref y, dialogTest);
+					DrawBlock(ref y, inputDialogTest);
+					DrawBlock(ref y, faderTest);
+					DrawBlock(ref y, lineMessageTest);
+					DrawBlock(ref y, loadingPanelTest);
+					DrawBlock(ref y, waitPanelTest);
+					DrawBlock(ref y, modalServiceTest);
+					break;
+				case UIWidgetsDemoImgui.Section.Buttons:
+					DrawBlock(ref y, buttonXTest);
+					break;
+				case UIWidgetsDemoImgui.Section.Lists:
+					DrawBlock(ref y, scrollListTest);
+					DrawBlock(ref y, tabsTest);
+					break;
+				case UIWidgetsDemoImgui.Section.Feedback:
+					DrawBlock(ref y, toastTest);
+					DrawBlock(ref y, contextMenuTest);
+					DrawBlock(ref y, popupTextTest);
+					break;
+				case UIWidgetsDemoImgui.Section.Layout:
+					DrawBlock(ref y, layoutXTest);
+					break;
+			}
+
+			UIWidgetsDemoImgui.EndContent(y);
+		}
+
+		private static void DrawBlock(ref float y, IDemoImguiHarness harness)
+		{
+			if (harness == null)
+				return;
+			harness.DrawImgui(ref y);
+			UIWidgetsDemoImgui.BlockSpacer(ref y);
 		}
 
 		[ContextMenu("Resolve Scene + Apply Visibility")]
 		public void ResolveAndApply()
 		{
 			ResolveSceneInstances();
+			ResolveHarnesses();
 			WireHarnesses();
 			CollectDefaultSectionRoots();
 			ApplySectionVisibility(UIWidgetsDemoImgui.CurrentSection);
@@ -66,6 +118,24 @@ namespace AetherNexus.UIWidgets
 				demoTabs = FindFirstObjectByType<UITabs>(FindObjectsInactive.Include);
 			if (demoLayoutX == null)
 				demoLayoutX = FindFirstObjectByType<LayoutX>(FindObjectsInactive.Include);
+		}
+
+		private void ResolveHarnesses()
+		{
+			if (dialogTest == null) dialogTest = FindFirstObjectByType<DialogTest>(FindObjectsInactive.Include);
+			if (inputDialogTest == null) inputDialogTest = FindFirstObjectByType<InputDialogTest>(FindObjectsInactive.Include);
+			if (faderTest == null) faderTest = FindFirstObjectByType<FaderTest>(FindObjectsInactive.Include);
+			if (lineMessageTest == null) lineMessageTest = FindFirstObjectByType<LineMessageTest>(FindObjectsInactive.Include);
+			if (loadingPanelTest == null) loadingPanelTest = FindFirstObjectByType<LoadingPanelTest>(FindObjectsInactive.Include);
+			if (waitPanelTest == null) waitPanelTest = FindFirstObjectByType<WaitPanelTest>(FindObjectsInactive.Include);
+			if (modalServiceTest == null) modalServiceTest = FindFirstObjectByType<ModalServiceTest>(FindObjectsInactive.Include);
+			if (buttonXTest == null) buttonXTest = FindFirstObjectByType<ButtonXTest>(FindObjectsInactive.Include);
+			if (scrollListTest == null) scrollListTest = FindFirstObjectByType<ScrollListTest>(FindObjectsInactive.Include);
+			if (tabsTest == null) tabsTest = FindFirstObjectByType<TabsTest>(FindObjectsInactive.Include);
+			if (toastTest == null) toastTest = FindFirstObjectByType<ToastTest>(FindObjectsInactive.Include);
+			if (contextMenuTest == null) contextMenuTest = FindFirstObjectByType<ContextMenuTest>(FindObjectsInactive.Include);
+			if (popupTextTest == null) popupTextTest = FindFirstObjectByType<PopupTextTest>(FindObjectsInactive.Include);
+			if (layoutXTest == null) layoutXTest = FindFirstObjectByType<LayoutXTest>(FindObjectsInactive.Include);
 		}
 
 		private void CollectDefaultSectionRoots()
@@ -107,9 +177,7 @@ namespace AetherNexus.UIWidgets
 				var ctx = FindFirstObjectByType<ContextMenuWidget>(FindObjectsInactive.Include);
 				if (ctx != null)
 					list.Add(ctx.gameObject);
-				var popup = FindFirstObjectByType<PopupText>(FindObjectsInactive.Include);
-				if (popup != null)
-					list.Add(popup.gameObject);
+				// PopupText stays active (world-space; section toggle hides nothing useful and can break singleton timing).
 				if (list.Count > 0)
 					feedbackSectionRoots = list.ToArray();
 			}
@@ -154,6 +222,12 @@ namespace AetherNexus.UIWidgets
 			if (layoutXTest != null && demoLayoutX != null)
 				layoutXTest.layoutX = demoLayoutX;
 		}
+	}
+
+	/// <summary>Drawn from <see cref="DemoGalleryBootstrap"/> OnGUI only (single IMGUI owner).</summary>
+	public interface IDemoImguiHarness
+	{
+		void DrawImgui(ref float y);
 	}
 }
 #endif

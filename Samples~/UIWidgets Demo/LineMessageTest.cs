@@ -5,7 +5,7 @@ using UnityEngine;
 namespace AetherNexus.UIWidgets
 {
     /// <summary>Play Mode harness for <see cref="LineMessage"/>.</summary>
-    public class LineMessageTest : MonoBehaviour
+    public class LineMessageTest : MonoBehaviour, IDemoImguiHarness
     {
         [Header("Test Configuration")]
         public bool testOnStart;
@@ -60,12 +60,8 @@ namespace AetherNexus.UIWidgets
             LineMessage.Instance.Show("Third line", "3", duration);
         }
 
-        private void OnGUI()
+        public void DrawImgui(ref float y)
         {
-            if (!UIWidgetsDemoImgui.IsSection(UIWidgetsDemoImgui.Section.Modals))
-                return;
-
-            float y = UIWidgetsDemoImgui.ContentY + 250f;
             if (UIWidgetsDemoImgui.Button(ref y, "Line+Title")) TestWithTitle();
             if (UIWidgetsDemoImgui.Button(ref y, "Line only")) TestMessageOnly();
             if (UIWidgetsDemoImgui.Button(ref y, "Line burst")) TestBurst();

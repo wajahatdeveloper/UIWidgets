@@ -5,7 +5,7 @@ using UnityEngine;
 namespace AetherNexus.UIWidgets
 {
 	/// <summary>Play Mode harness for <see cref="Toast"/> / <see cref="ToastUI"/>.</summary>
-	public class ToastTest : MonoBehaviour
+	public class ToastTest : MonoBehaviour, IDemoImguiHarness
 	{
 		[ContextMenu("Toast Green")]
 		public void TestGreen()
@@ -55,17 +55,13 @@ namespace AetherNexus.UIWidgets
 		[ContextMenu("Dismiss All")]
 		public void TestDismissAll() => Toast.DismissAll();
 
-		private void OnGUI()
+		public void DrawImgui(ref float y)
 		{
-			if (!UIWidgetsDemoImgui.IsSection(UIWidgetsDemoImgui.Section.Feedback))
-				return;
-
-			float y = UIWidgetsDemoImgui.ContentY;
 			UIWidgetsDemoImgui.Label(ref y, ToastUI.HasInstance ? "ToastUI ok" : "need ToastUI");
-			if (ToastUI.HasInstance)
-			{
-				UIWidgetsDemoImgui.Label(ref y, $"showing:{ToastUI.Instance.IsShowing} q:{ToastUI.Instance.QueuedCount}");
-			}
+			UIWidgetsDemoImgui.Label(ref y,
+				ToastUI.HasInstance
+					? $"showing:{ToastUI.Instance.IsShowing} q:{ToastUI.Instance.QueuedCount}"
+					: "showing:- q:-");
 			if (UIWidgetsDemoImgui.Button(ref y, "Toast Green")) TestGreen();
 			if (UIWidgetsDemoImgui.Button(ref y, "Toast Red")) TestRed();
 			if (UIWidgetsDemoImgui.Button(ref y, "Toast Queue")) TestQueue();

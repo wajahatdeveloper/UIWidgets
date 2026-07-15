@@ -5,7 +5,7 @@ using UnityEngine;
 namespace AetherNexus.UIWidgets
 {
 	/// <summary>Play Mode harness for <see cref="ButtonX"/>.</summary>
-	public class ButtonXTest : MonoBehaviour
+	public class ButtonXTest : MonoBehaviour, IDemoImguiHarness
 	{
 		[Tooltip("Assign or let DemoGalleryBootstrap resolve Demo_ButtonX.")]
 		public ButtonX demoButton;
@@ -121,12 +121,8 @@ namespace AetherNexus.UIWidgets
 			DebugX.Logger(LogChannels.UI).Info("[UI:INFO:Test] Applied toggleGroup to {Count} buttons.", toggleGroupButtons.Length);
 		}
 
-		private void OnGUI()
+		public void DrawImgui(ref float y)
 		{
-			if (!UIWidgetsDemoImgui.IsSection(UIWidgetsDemoImgui.Section.Buttons))
-				return;
-
-			float y = UIWidgetsDemoImgui.ContentY;
 			UIWidgetsDemoImgui.Label(ref y, demoButton != null ? demoButton.name : "no ButtonX");
 			if (UIWidgetsDemoImgui.Button(ref y, "BX Click")) TestClick();
 			if (UIWidgetsDemoImgui.Button(ref y, "BX ToggleMode")) TestToggle();

@@ -5,7 +5,7 @@ using UnityEngine;
 namespace AetherNexus.UIWidgets
 {
     /// <summary>Play Mode harness for <see cref="LoadingPanel"/>.</summary>
-    public class LoadingPanelTest : MonoBehaviour
+    public class LoadingPanelTest : MonoBehaviour, IDemoImguiHarness
     {
         [Header("Test Configuration")]
         public bool testOnStart;
@@ -49,12 +49,8 @@ namespace AetherNexus.UIWidgets
             LoadingPanel.Instance.HideIfShown();
         }
 
-        private void OnGUI()
+        public void DrawImgui(ref float y)
         {
-            if (!UIWidgetsDemoImgui.IsSection(UIWidgetsDemoImgui.Section.Modals))
-                return;
-
-            float y = UIWidgetsDemoImgui.ContentY + 320f;
             if (UIWidgetsDemoImgui.Button(ref y, "Load show")) TestShowSimple();
             if (UIWidgetsDemoImgui.Button(ref y, "Load bar")) TestTimedProgress();
             if (UIWidgetsDemoImgui.Button(ref y, "Load hide")) TestHide();
