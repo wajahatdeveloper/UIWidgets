@@ -1,60 +1,103 @@
 # UI Widgets
 
-General-purpose Unity UGUI widget library. Built on Foundation Platform (`com.aethernexus.foundationplatform`).
+Free Unity UGUI widget library for the **AetherNexus** toolkit (`com.aethernexus.uiwidgets`). Modals, lists, buttons, layout, and editor tooling — built on Foundation Platform.
+
+**Publisher:** [AetherNexus](https://aethernexus.online) · **Support:** wajahatdeveloperqs@gmail.com  
+**Unity:** 6000.3.10f1+ · **URP** recommended · **License:** [MIT](LICENSE.md)  
+**Requires:** [Foundation Platform](https://aethernexus.online) (`com.aethernexus.foundationplatform`) — UniTask is embedded there; see [Third-Party Notices.txt](Third-Party%20Notices.txt)
 
 ## What's inside
 
-- **Panels & modals** — `PanelBase` (draggable), singleton `Dialog` / `InputDialog` / `LoadingPanel` / `WaitPanel` / `Fader`, all with fluent builders
-- **ButtonX** — enhanced UGUI button: 5 visual states, long-press / double-click / hold-repeat / toggle, color-tint or sprite-swap
-- **ScrollableList** — virtualized, pooled list with reactive `ObservableList<T>` binding, filtering, sorting
-- **Context menu** — `ContextMenuWidget` with smart viewport-clamped placement
-- **Tabs** — `UITabs` + keyboard `TabNavigationHelper`
-- **Sliders** — `RangeSlider`, `MinMaxSlider`, `BoxSlider`, `RadialSlider`, `Stepper`
-- **Card UI** — `CardStack2D`
-- **Notifications / focus** — static `Toast` (8 colors × 9 positions), `DefaultFocus`, `AutoClick`
-- **Procedural graphics** — `UICircle`, `UIPolygon`, `UISquircle`, `UILineRenderer`, `UIGridRenderer`, `DiamondGraph`
-- **Effects & masking** — `UIGradient`, `UIShine`, `UIFlip`, `TeleType`, `UISoftMask`, tooltips
-- **LayoutX** — in-house single-component layout engine (Compact flow / Grid), replaces vendored EasyLayout
-- **Editor tooling** — UI Widgets Window (browse/instantiate widget prefabs), ScenePicker, Text→TMP migration, ButtonX upgrade tool
+| Area | What you get |
+|------|----------------|
+| **Panels & modals** | `Dialog`, `InputDialog`, `LoadingPanel`, `WaitPanel`, `Fader` with fluent builders |
+| **ButtonX** | Enhanced UGUI button: states, long-press, double-click, hold-repeat, toggle |
+| **ScrollableList** | Virtualized pooled list with `ObservableList<T>` binding |
+| **Navigation & chrome** | Context menus, tabs, sliders, card UI, toasts, tooltips |
+| **Graphics & effects** | Procedural primitives, gradients, soft masks, UI effects |
+| **LayoutX** | Single-component flow / grid layout |
+| **Editor** | UI Widgets window, GameObject create menus, Text→TMP migration, ButtonX upgrade |
 
-## Install
+Docs index: [Documentation~/index.md](Documentation~/index.md)
 
-Package id: `com.aethernexus.uiwidgets` (publisher: AetherNexus). Intended as free Asset Store UPM. Depends on Foundation Platform + UniTask.
+## Install (Asset Store UPM)
 
-See [Documentation~/PUBLISHING.md](Documentation~/PUBLISHING.md) for Asset Store UPM checklist and UniTask (5.2.c) notes.
+1. Install **Foundation Platform** first (Package Manager → **My Assets** → Download / Import).
+2. Package Manager → **My Assets** → **UI Widgets** → Download / Import.
+3. Project Settings → Player → **Active Input Handling** = Input System Package **or** Both.
+4. Confirm **uGUI** is present (`com.unity.ugui` — included in typical URP templates).
+5. Optional: Package Manager → Samples → import **Input Dialog Demo**.
 
-Licensing: MIT — see `LICENSE.md`. Third-party: UniTask (MIT) — see `Third-Party Notices.txt`.
+**Do not** install Cysharp UniTask separately. Foundation Platform embeds UniTask; a second UniTask package collides on the `UniTask` assembly name.
 
 ## Dependencies
 
-- `com.aethernexus.foundationplatform` 1.0.0 (includes embedded UniTask)
-- `com.unity.inputsystem` 1.18.0
-- `com.unity.ugui` 2.0.0 (includes TextMeshPro on Unity 6)
+| Dependency | How provided |
+|------------|----------------|
+| `com.aethernexus.foundationplatform` | Asset Store / Package Manager (required) |
+| UniTask (MIT) | Embedded in Foundation Platform |
+| `com.unity.inputsystem` | Declared in `package.json` |
+| `com.unity.ugui` | Declared in `package.json` (includes TextMeshPro on Unity 6) |
 
 ## Quick usage
 
 ```csharp
-// Dialog
+using AetherNexus.UIWidgets;
+
 Dialog.Create("Delete this item?")
     .WithLayout(Dialog.Layout.YesNo)
     .OnYes(() => Delete())
-    .Show();
+    .ShowWithLayout();
 
-// Toast
-Toast.Prepare().WithDuration(3f).WithColor(ToastColor.Green).AtPosition(TopRight).Show();
+Toast.Create("Saved")
+    .WithDuration(3f)
+    .WithColor(ToastColor.Green)
+    .AtPosition(ToastPosition.TopRight)
+    .Show(); // requires a ToastUI instance in the scene (e.g. Widgets/Canvas_ToastUI)
 
-// Virtualized list bound to a reactive source
 scrollableList.SetDataSource(observableItems, x => (x.Name, x.Subtitle, x.Icon));
 ```
 
+Runtime types live under `AetherNexus.UIWidgets`. Editor tools under `AetherNexus.UIWidgets.Editor`.
+
+## Useful menus
+
+| Menu | Purpose |
+|------|---------|
+| **Window → UIWidgets → UI Widgets...** | Browse / instantiate widget prefabs |
+| **GameObject → UIWidgets → …** | Create panels, buttons, sliders, etc. |
+| **Tools → UIWidgets → Settings...** | Package settings |
+| **Tools → UIWidgets → Scene Picker Enabled** | Scene pick toggle |
+
 ## Assemblies
 
-| Assembly | Folder | Notes |
-|---|---|---|
-| `UIWidgets.Runtime` | `Runtime/` | refs TextMeshPro, Input System, UniTask, FoundationPlatform.Runtime |
-| `UIWidgets.Editor` | `Editor/` | editor tooling; refs FoundationPlatform.Editor |
-| `UIWidgets.GameEngineCoreIntegration.Editor` | `Editor/Integration/GameEngineCore/` | **optional** — compiles only when `HOMAM_GEC` is defined (i.e. inside the HOMAM project). Contributes a CentralAuthoring workflow. Dormant in a standalone install. |
+| Assembly | Role |
+|----------|------|
+| `UIWidgets.Runtime` | Runtime widgets |
+| `UIWidgets.Editor` | Editor tooling |
+| `UIWidgets.GameEngineCoreIntegration.Editor` | Optional Central Authoring plugin — compiles only when scripting define `HOMAM_GEC` is present (GameEngineCore installs). Inactive for a standalone UI Widgets project. |
 
-## License
+## Package Integration Manifest
 
-[MIT](LICENSE.md) — free to use and modify, keep the copyright notice, don't represent it as your own work.
+`PackageIntegrationManifest.asset` registers this package with **GameEngineCore Central Authoring** when that product is installed. Optional metadata for the wider AetherNexus hub — not required for Dialog, ButtonX, lists, or LayoutX.
+
+## Compatibility
+
+- **Unity** 6000.3.10f1+
+- **URP** recommended (Unity 6 default)
+- **Foundation Platform** required
+- **Fast Enter Play Mode** (Domain Reload disabled): **not supported**. Keep Domain Reload enabled.
+
+## Samples
+
+Import **UI Widgets Demo** from Package Manager Samples. Details: [SAMPLES.md](SAMPLES.md)
+
+## Support
+
+- Website: [aethernexus.online](https://aethernexus.online)
+- Email: wajahatdeveloperqs@gmail.com
+- Changes: [CHANGELOG.md](CHANGELOG.md)
+
+## Version
+
+**1.0.0** — public API; breaking changes bump MAJOR.

@@ -142,6 +142,8 @@ namespace AetherNexus.UIWidgets.Editor
 	[CustomEditor(typeof(AutoUIRefs))]
 	public class AutoUIRefsEditor : UnityEditor.Editor
 	{
+		private const string DefaultGeneratedNamespace = "Game.UI";
+
 		private AutoUIRefs uiManager;
 		
 		// Foldout states for collapsible sections
@@ -290,7 +292,7 @@ namespace AetherNexus.UIWidgets.Editor
 					folder,
 					defaultClassName + ".cs",
 					defaultClassName,
-					string.Empty,
+					DefaultGeneratedNamespace,
 					BuildGeneratedCode,
 					ValidateForGenerate);
 			}
@@ -303,7 +305,7 @@ namespace AetherNexus.UIWidgets.Editor
 					folder,
 					defaultClassName + ".cs",
 					defaultClassName,
-					string.Empty,
+					DefaultGeneratedNamespace,
 					BuildGeneratedCode,
 					ValidateForGenerate,
 					onGenerated: WriteAttachPending);

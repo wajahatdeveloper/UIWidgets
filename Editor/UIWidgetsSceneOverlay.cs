@@ -22,6 +22,9 @@ namespace AetherNexus.UIWidgets.Editor
 
 		public override VisualElement CreatePanelContent()
 		{
+			// Start (or continue) project-prefab warm before building curated tiles.
+			ProjectUIPrefabScanCache.RequestWarm();
+
 			var root = new VisualElement { name = "UIWidgetsOverlayRoot" };
 			root.style.minWidth = 270;
 

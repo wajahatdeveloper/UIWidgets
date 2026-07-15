@@ -1,6 +1,6 @@
 # UI Widgets Architecture
 
-General-purpose Unity UGUI widget library. Depends only on `com.aethernexus.foundationplatform` (+ TextMeshPro / Input System / UniTask). Game-specific widgets are **not** part of this package — they live in their own gameplay frameworks and consume these widgets.
+General-purpose Unity UGUI widget library. Depends only on `com.aethernexus.foundationplatform` (+ TextMeshPro / Input System / UniTask via Foundation Platform). Game-specific widgets are **not** part of this package — they live in gameplay frameworks that consume these widgets.
 
 ---
 
@@ -10,18 +10,18 @@ General-purpose Unity UGUI widget library. Depends only on `com.aethernexus.foun
 |---|---|---|---|
 | `UIWidgets.Runtime` | `Runtime/` | TextMeshPro, Input System, UniTask, FoundationPlatform.Runtime | ships |
 | `UIWidgets.Editor` | `Editor/` | FoundationPlatform.Runtime/Editor, UIWidgets.Runtime | ships |
-| `UIWidgets.GameEngineCoreIntegration.Editor` | `Editor/Integration/GameEngineCore/` | UIWidgets.Editor, GameEngineCore.Editor | **optional** — `defineConstraints: ["HOMAM_GEC"]` |
+| `UIWidgets.GameEngineCoreIntegration.Editor` | `Editor/Integration/GameEngineCore/` | UIWidgets.Editor, GameEngineCore.Editor | **optional** — compiles only when scripting define `HOMAM_GEC` is present |
 
-**Namespaces:** `UIWidgets` (runtime) and `UIWidgets.Editor` (editor). No third-party namespaces — vendored deps were internalized (EasyLayout → `LayoutX`, Nementic scene picker → `ScenePicker`).
+**Namespaces:** `AetherNexus.UIWidgets` (runtime) and `AetherNexus.UIWidgets.Editor` (editor). Vendored deps were internalized (EasyLayout → `LayoutX`, Nementic scene picker → `ScenePicker`).
 
-### The optional GameEngineCore integration
+### Optional GameEngineCore integration
 
-Core UIWidgets has **zero** dependency on GameEngineCore. The only coupling — a CentralAuthoring plugin — is isolated in `UIWidgets.GameEngineCoreIntegration.Editor`, gated by the `HOMAM_GEC` scripting define. GameEngineCore sets that define on load (`GameEngineCorePresenceDefine`), so:
+Core UIWidgets has **zero** hard dependency on GameEngineCore. The only coupling — a Central Authoring plugin — is isolated in `UIWidgets.GameEngineCoreIntegration.Editor`, gated by the `HOMAM_GEC` scripting define (set by GameEngineCore when that product is installed):
 
-- **Inside HOMAM** — GameEngineCore present → `HOMAM_GEC` defined → integration compiles → `UIWidgetsCentralAuthoringPlugin` is discovered via TypeCache and contributes the "Widget Setup" workflow.
-- **Standalone install** — no GameEngineCore, no define → the integration assembly is skipped entirely → package compiles clean.
+- **With GameEngineCore** — define present → integration compiles → Central Authoring can discover the Widget Setup workflow.
+- **Standalone install** — no define → integration assembly is skipped → package compiles clean.
 
-Do not re-add a `GameEngineCore.Editor` reference to the core Editor asmdef — it would reintroduce the hard dependency this split exists to remove.
+Do not re-add a `GameEngineCore.Editor` reference to the core Editor asmdef.
 
 ---
 
@@ -94,7 +94,7 @@ SetDataSource<T>(ObservableList<T> source, binder)   // reactive auto-sync
 | `UITabs` | `Scripts/UITabs.cs` | `OnClick_TabButton`, `RebuildTabsFromParents`, `SelectTabByName`; `TabNavigationHelper` for Tab/Shift-Tab nav |
 | Sliders | `Sliders_Scripts/` | `RangeSlider`, `MinMaxSlider`, `BoxSlider`, `RadialSlider`, `Stepper` / `StepperSide` |
 | `CardStack2D` | `CardUI_Scripts/` | card deck; exponential spacing; lerp to target |
-| `Toast` | `Component_Scripts/Toast.cs` | static; `Toast.Prepare().WithDuration().WithColor().AtPosition().Show()`; 8 colors × 9 positions; loaded from Resources |
+| `Toast` | `Component_Scripts/Toast.cs` | static; `Toast.Create(text).WithDuration().WithColor().AtPosition().Show()`; 8 colors × 9 positions; requires a `ToastUI` instance in the scene |
 | `DefaultFocus`, `AutoClick`, `AlphaButtonClickMask` | `Utility_Scripts/` | focus/click helpers, alpha raycast filter |
 
 ---
@@ -136,7 +136,7 @@ SetDataSource<T>(ObservableList<T> source, binder)   // reactive auto-sync
 | Settings | `Editor/Settings/` | `UIWidgetsSettings` + `UIWidgetsSettingsProvider` (Project Settings page) |
 | `TextToTMPMigrationTool` | `Editor/` | migrate legacy `Text` → TMP |
 | `UIWidgetsSceneOverlay` | `Editor/` | scene-view overlay |
-| CentralAuthoring plugin | `Editor/Integration/GameEngineCore/` | **optional**, see Assemblies |
+| Central Authoring plugin | `Editor/Integration/GameEngineCore/` | **optional**, see Assemblies |
 
 ---
 

@@ -15,6 +15,7 @@ namespace AetherNexus.UIWidgets.Editor
 	[CanEditMultipleObjects]
 	public class PanelBaseEditor : UnityEditor.Editor
 	{
+		private const string DefaultGeneratedNamespace = "Game.UI";
 		private const string FallbackOutputFolder = "Assets";
 		private const string PreferredPanelsOutputFolder = "Assets/Scripts/UI/Panels";
 		private const string PendingComponentKey = "UIWidgets.PanelBaseEditor.PendingComponentGlobalId";
@@ -94,7 +95,7 @@ namespace AetherNexus.UIWidgets.Editor
 				outputFolder,
 				defaultFileName,
 				defaultClassName,
-				string.Empty,
+				DefaultGeneratedNamespace,
 				BuildCode,
 				ValidateInput,
 				generatedPath => HandleGenerated(panel, generatedPath));
@@ -105,6 +106,8 @@ namespace AetherNexus.UIWidgets.Editor
 			var name = SanitizeClassName(context.ClassName);
 			var namespaceValue = (context.Namespace ?? string.Empty).Trim();
 			var sb = new StringBuilder();
+			sb.AppendLine("using AetherNexus.UIWidgets;");
+			sb.AppendLine();
 
 			if (!string.IsNullOrEmpty(namespaceValue))
 			{
@@ -113,7 +116,7 @@ namespace AetherNexus.UIWidgets.Editor
 			}
 
 			var indent = string.IsNullOrEmpty(namespaceValue) ? string.Empty : "\t";
-			sb.AppendLine(indent + "public class " + name + " : UIWidgets.PanelBase");
+			sb.AppendLine(indent + "public class " + name + " : PanelBase");
 			sb.AppendLine(indent + "{");
 			sb.AppendLine(indent + "\tprotected override void OnBeforeShow()");
 			sb.AppendLine(indent + "\t{");

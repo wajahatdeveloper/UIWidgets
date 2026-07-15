@@ -24,9 +24,9 @@
   },
   "samples": [
     {
-      "displayName": "Input Dialog Demo",
-      "description": "Manual demo scene component exercising InputDialog (basic, validated, keyboard shortcuts).",
-      "path": "Samples~/InputDialogDemo"
+      "displayName": "UI Widgets Demo",
+      "description": "Play Mode scene with Dialog, InputDialog, Fader, LineMessage, LoadingPanel, WaitPanel, and ModalService harness scripts.",
+      "path": "Samples~/UIWidgets Demo"
     }
   ]
 }

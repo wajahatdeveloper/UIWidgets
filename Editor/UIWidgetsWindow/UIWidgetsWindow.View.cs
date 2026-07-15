@@ -31,10 +31,11 @@ namespace AetherNexus.UIWidgets.Editor
 
 		static UIWidgets()
 		{
-			ProjectUIPrefabScanCache.Invalidated += OnProjectUIPrefabsInvalidated;
+			ProjectUIPrefabScanCache.Invalidated += OnProjectUIPrefabsChanged;
+			ProjectUIPrefabScanCache.Warmed += OnProjectUIPrefabsChanged;
 		}
 
-		private static void OnProjectUIPrefabsInvalidated()
+		private static void OnProjectUIPrefabsChanged()
 		{
 			var instances = Resources.FindObjectsOfTypeAll<UIWidgets>();
 			if (instances == null) return;
@@ -53,6 +54,8 @@ namespace AetherNexus.UIWidgets.Editor
 		private VisualElement _gridContainer;
 		private VisualElement _recentsSection;
 		private VisualElement _recentsStrip;
+		private List<TileInfo> _tileInfoCache;
+		private bool _tileInfoCacheIncludesProject;
 
 		private struct TileInfo
 		{
@@ -101,6 +104,7 @@ namespace AetherNexus.UIWidgets.Editor
 		private void RefreshPalette()
 		{
 			if (_paletteRoot == null) return;
+			InvalidateTileInfoCache();
 			_paletteRoot.Clear();
 			PopulatePalette();
 		}
@@ -108,6 +112,7 @@ namespace AetherNexus.UIWidgets.Editor
 		private void PopulatePalette()
 		{
 			EnsureAssetLoaded();
+			InvalidateTileInfoCache();
 
 			if (uiWidgetsAsset == null)
 			{
@@ -117,6 +122,10 @@ namespace AetherNexus.UIWidgets.Editor
 				_paletteRoot.Add(new UIEButton(() => { TryLoadAsset(); RefreshPalette(); }) { text = "Locate Asset" });
 				return;
 			}
+
+			// Kick project-prefab warm immediately; curated tiles paint without waiting on it.
+			if (!ProjectUIPrefabScanCache.IsReady)
+				ProjectUIPrefabScanCache.RequestWarm();
 
 			// Fixed header: options + search-with-Select always visible.
 			_paletteRoot.Add(BuildOptionsBar());
@@ -138,6 +147,29 @@ namespace AetherNexus.UIWidgets.Editor
 
 			RebuildGrid();
 			RefreshRecents();
+		}
+
+		private void InvalidateTileInfoCache()
+		{
+			_tileInfoCache = null;
+		}
+
+		/// <summary>
+		/// Shared tile list for grid + recents. Project UI Prefabs are omitted until the
+		/// background scan is ready so overlay / window open stays responsive.
+		/// </summary>
+		private List<TileInfo> GetTileInfos()
+		{
+			bool includeProject = ProjectUIPrefabScanCache.IsReady;
+			if (_tileInfoCache != null && _tileInfoCacheIncludesProject == includeProject)
+				return _tileInfoCache;
+
+			if (!includeProject)
+				ProjectUIPrefabScanCache.RequestWarm();
+
+			_tileInfoCache = BuildTileInfos(includeProject);
+			_tileInfoCacheIncludesProject = includeProject;
+			return _tileInfoCache;
 		}
 
 		#region Options + search
@@ -201,7 +233,7 @@ namespace AetherNexus.UIWidgets.Editor
 
 		#region Grid + tiles
 
-		private List<TileInfo> BuildTileInfos()
+		private List<TileInfo> BuildTileInfos(bool includeProjectPrefabs)
 		{
 			var list = new List<TileInfo>();
 			if (uiWidgetsAsset?.widgets == null) return list;
@@ -225,6 +257,9 @@ namespace AetherNexus.UIWidgets.Editor
 			// Attach-component tiles appear after the widget categories.
 			foreach (var c in ComponentTiles)
 				list.Add(new TileInfo { name = c.name, category = c.category, component = c.type, noCanvas = false });
+
+			if (!includeProjectPrefabs)
+				return list;
 
 			var curatedGuids = GetCuratedPrefabGuids();
 			foreach (var entry in ProjectUIPrefabScanCache.GetEntries())
@@ -281,7 +316,7 @@ namespace AetherNexus.UIWidgets.Editor
 
 			var order = new List<string>();
 			var byCat = new Dictionary<string, List<TileInfo>>();
-			foreach (var t in BuildTileInfos())
+			foreach (var t in GetTileInfos())
 			{
 				if (!byCat.TryGetValue(t.category, out var l))
 				{
@@ -299,15 +334,32 @@ namespace AetherNexus.UIWidgets.Editor
 
 				var foldout = new Foldout { text = $"{cat}  ({visible.Count})" };
 				// Set value before wiring the save callback so search-expansion doesn't clobber prefs.
-				foldout.value = searching || GetFoldout(cat);
+				bool expanded = searching || GetFoldout(cat);
+				foldout.value = expanded;
 				if (!searching)
 					foldout.RegisterValueChangedCallback(e => SetFoldout(cat, e.newValue));
 
 				var wrap = new VisualElement();
 				wrap.style.flexDirection = FlexDirection.Row;
 				wrap.style.flexWrap = Wrap.Wrap;
-				foreach (var t in visible)
-					wrap.Add(BuildTile(t));
+
+				// Skip tile VisualElements for collapsed categories; build on first expand.
+				if (expanded)
+				{
+					foreach (var t in visible)
+						wrap.Add(BuildTile(t));
+				}
+				else
+				{
+					void OnExpand(ChangeEvent<bool> e)
+					{
+						if (!e.newValue) return;
+						foldout.UnregisterValueChangedCallback(OnExpand);
+						foreach (var t in visible)
+							wrap.Add(BuildTile(t));
+					}
+					foldout.RegisterValueChangedCallback(OnExpand);
+				}
 
 				foldout.Add(wrap);
 				_gridContainer.Add(foldout);
@@ -598,7 +650,7 @@ namespace AetherNexus.UIWidgets.Editor
 			_recentsStrip.Clear();
 
 			var byName = new Dictionary<string, TileInfo>();
-			foreach (var t in BuildTileInfos())
+			foreach (var t in GetTileInfos())
 				byName[t.name] = t;
 
 			int shown = 0;
@@ -613,7 +665,13 @@ namespace AetherNexus.UIWidgets.Editor
 			_recentsSection.style.display = shown > 0 ? DisplayStyle.Flex : DisplayStyle.None;
 		}
 
-		private static bool GetFoldout(string cat) => EditorPrefs.GetBool(PrefKey_FoldoutPrefix + cat, true);
+		private static bool GetFoldout(string cat)
+		{
+			// Project scan can be large; keep collapsed until the designer opens it.
+			bool defaultExpanded = cat != ProjectUIPrefabsCategory;
+			return EditorPrefs.GetBool(PrefKey_FoldoutPrefix + cat, defaultExpanded);
+		}
+
 		private static void SetFoldout(string cat, bool value) => EditorPrefs.SetBool(PrefKey_FoldoutPrefix + cat, value);
 
 		#endregion

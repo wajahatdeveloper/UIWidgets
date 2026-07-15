@@ -182,7 +182,31 @@ namespace AetherNexus.UIWidgets
 
             public void ShowWithLayout()
             {
-                Instance.Show(_message, _title, _layout, _onYes, _onNo, _onCancel, _onClose, _iconType, _customIcon);
+                // Map fluent callbacks onto layout roles (primary / secondary / tertiary).
+                Action primary = null;
+                Action secondary = null;
+                Action tertiary = null;
+                switch (_layout)
+                {
+                    case Layout.Ok:
+                        primary = _onOk ?? _onYes;
+                        break;
+                    case Layout.OkCancel:
+                        primary = _onOk ?? _onYes;
+                        secondary = _onCancel ?? _onNo;
+                        break;
+                    case Layout.YesNo:
+                        primary = _onYes;
+                        secondary = _onNo;
+                        break;
+                    case Layout.YesNoCancel:
+                        primary = _onYes;
+                        secondary = _onNo;
+                        tertiary = _onCancel;
+                        break;
+                }
+
+                Instance.Show(_message, _title, _layout, primary, secondary, tertiary, _onClose, _iconType, _customIcon);
             }
         }
 
@@ -226,50 +250,57 @@ namespace AetherNexus.UIWidgets
 
         public virtual void Show(string text, string titleText, Layout layout, Action onPrimary=null, Action onSecondary=null, Action onTertiary=null, Action onClose=null, DialogIcon iconType=DialogIcon.None, Sprite customIconSprite=null)
         {
-            // Map layout to actions/buttons:
-            // Ok: onPrimary -> OK
-            // OkCancel: onPrimary -> OK, onSecondary -> Cancel
-            // YesNo: onPrimary -> Yes, onSecondary -> No
-            // YesNoCancel: onPrimary -> Yes, onSecondary -> No, onTertiary -> Cancel
+            // Layout always shows its buttons (callbacks may be null — click still dismisses).
+            // Ok:            primary -> OK
+            // OkCancel:      primary -> OK, secondary -> Cancel
+            // YesNo:         primary -> Yes, secondary -> No
+            // YesNoCancel:   primary -> Yes, secondary -> No, tertiary -> Cancel
 
-            // Clear all first
-            SetActionAndButton(null, out OnYes, yesButton);
-            SetActionAndButton(null, out OnNo, noButton);
-            SetActionAndButton(null, out OnCancel, cancelButton);
-            SetActionAndButton(null, out OnOk, okButton);
-            SetActionAndButton(null, out OnClose, closeButton);
+            if (message != null) message.text = text;
+            if (title != null) title.text = titleText;
 
-            // Set close button availability
-            if (closeButton != null)
-            {
-                closeButton.gameObject.SetActive(enableCloseButton);
-            }
-
-            // Set icon
-            if (customIconSprite != null)
-            {
-                SetCustomIcon(customIconSprite);
-            }
-            else
-            {
-                SetIcon(iconType);
-            }
+            BindButton(yesButton, out OnYes, null, false);
+            BindButton(noButton, out OnNo, null, false);
+            BindButton(cancelButton, out OnCancel, null, false);
+            BindButton(okButton, out OnOk, null, false);
+            OnClose = onClose;
 
             switch (layout)
             {
                 case Layout.Ok:
-                    Show(text, titleText, null, null, onPrimary, null, onClose, iconType, customIconSprite);
+                    BindButton(okButton, out OnOk, onPrimary, true);
                     break;
                 case Layout.OkCancel:
-                    Show(text, titleText, null, null, onPrimary, onSecondary, onClose, iconType, customIconSprite);
+                    BindButton(okButton, out OnOk, onPrimary, true);
+                    BindButton(cancelButton, out OnCancel, onSecondary, true);
                     break;
                 case Layout.YesNo:
-                    Show(text, titleText, onPrimary, onSecondary, null, null, onClose, iconType, customIconSprite);
+                    BindButton(yesButton, out OnYes, onPrimary, true);
+                    BindButton(noButton, out OnNo, onSecondary, true);
                     break;
                 case Layout.YesNoCancel:
-                    Show(text, titleText, onPrimary, onSecondary, null, onTertiary, onClose, iconType, customIconSprite);
+                    BindButton(yesButton, out OnYes, onPrimary, true);
+                    BindButton(noButton, out OnNo, onSecondary, true);
+                    BindButton(cancelButton, out OnCancel, onTertiary, true);
                     break;
             }
+
+            if (closeButton != null)
+                closeButton.gameObject.SetActive(enableCloseButton);
+
+            if (customIconSprite != null)
+                SetCustomIcon(customIconSprite);
+            else
+                SetIcon(iconType);
+
+            if (panel != null)
+            {
+                panel.SetActive(true);
+                TryFocusDefaultButton();
+            }
+
+            if (enableLogging)
+                DebugX.Logger(LogChannels.UI).Info("[UI:INFO:Panel] Dialog Shown ({Layout}) in {SceneName}", layout, SceneManager.GetActiveScene().name);
         }
 
         public virtual void Hide()
@@ -283,13 +314,16 @@ namespace AetherNexus.UIWidgets
             if (panel != null) panel.SetActive(false);
         }
 
-        private void SetActionAndButton(Action actionToAssign,out Action myAction, ButtonX button)
+        private void SetActionAndButton(Action actionToAssign, out Action myAction, ButtonX button)
         {
-            myAction = actionToAssign;
+            BindButton(button, out myAction, actionToAssign, actionToAssign != null);
+        }
+
+        private static void BindButton(ButtonX button, out Action myAction, Action action, bool visible)
+        {
+            myAction = action;
             if (button != null)
-            {
-                button.gameObject.SetActive(myAction==null?false:true);
-            }
+                button.gameObject.SetActive(visible);
         }
 
         public void OnClick_Yes()
