@@ -3,7 +3,7 @@ using UnityEngine.UI;
 
 namespace AetherNexus.UIWidgets
 {
-    [AddComponentMenu("UI/Extensions/Primitives/UIGridRenderer")]
+    [AddComponentMenu("UI (Canvas)/Extensions/Primitives/UIGridRenderer")]
 	public class UIGridRenderer : UILineRenderer
 	{
 		[SerializeField]

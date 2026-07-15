@@ -13,7 +13,7 @@ namespace AetherNexus.UIWidgets
     /// tessellated graphics (text, sliced images); a simple quad interpolates its four corners.
     /// </summary>
     [RequireComponent(typeof(Graphic))]
-    [AddComponentMenu("UI/Effects/UIWidgets/Gradient")]
+    [AddComponentMenu("UI (Canvas)/Effects/Gradient")]
     public class UIGradient : BaseMeshEffect
     {
         public enum Direction

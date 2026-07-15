@@ -3,7 +3,7 @@ using UnityEngine.UI;
 
 namespace AetherNexus.UIWidgets
 {
-    [AddComponentMenu("UI/Extensions/Primitives/UI Polygon")]
+    [AddComponentMenu("UI (Canvas)/Extensions/Primitives/UI Polygon")]
     public class UIPolygon : UIPrimitiveBase
     {
         public bool fill = true;

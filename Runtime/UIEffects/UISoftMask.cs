@@ -13,7 +13,7 @@ namespace AetherNexus.UIWidgets
     [ExecuteAlways]
     [RequireComponent(typeof(Graphic))]
     [DisallowMultipleComponent]
-    [AddComponentMenu("UI/Effects/UIWidgets/Soft Mask")]
+    [AddComponentMenu("UI (Canvas)/Effects/Soft Mask")]
     public class UISoftMask : MonoBehaviour
     {
         private const string ShaderName = "UIWidgets/SoftMask";

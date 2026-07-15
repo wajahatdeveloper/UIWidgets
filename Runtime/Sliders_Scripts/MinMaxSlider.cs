@@ -15,7 +15,7 @@ namespace AetherNexus.UIWidgets
     /// drag handler so the slider stays usable inside scroll views.
     /// </summary>
     [RequireComponent(typeof(RectTransform))]
-    [AddComponentMenu("UI/Sliders/MinMax Slider")]
+    [AddComponentMenu("UI (Canvas)/Sliders/MinMax Slider")]
     public class MinMaxSlider : Selectable, IBeginDragHandler, IDragHandler, IEndDragHandler
     {
         /// <summary>Raised when either value changes. Args: (min, max).</summary>

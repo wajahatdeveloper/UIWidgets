@@ -12,7 +12,7 @@ namespace AetherNexus.UIWidgets
     [RequireComponent(typeof(RectTransform))]
     [RequireComponent(typeof(Image))]
     [DisallowMultipleComponent]
-    [AddComponentMenu("UI/Effects/UIWidgets/Raycast Alpha Mask")]
+    [AddComponentMenu("UI (Canvas)/Effects/Raycast Alpha Mask")]
     public class UIRaycastAlphaMask : MonoBehaviour, ICanvasRaycastFilter
     {
         [SerializeField, Range(0f, 1f)]

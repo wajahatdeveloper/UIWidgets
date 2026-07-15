@@ -12,7 +12,7 @@ namespace AetherNexus.UIWidgets
     [ExecuteAlways]
     [RequireComponent(typeof(CanvasRenderer))]
     [RequireComponent(typeof(ParticleSystem))]
-    [AddComponentMenu("UI/Effects/UIWidgets/Canvas Particles")]
+    [AddComponentMenu("UI (Canvas)/Effects/Canvas Particles")]
     public class UICanvasParticles : MaskableGraphic
     {
         private const int MaxRenderedParticles = 16000; // stays under the 65k vertex limit per canvas mesh

@@ -7,7 +7,7 @@ namespace AetherNexus.UIWidgets
 	/// Mutual-exclusion group for <see cref="ButtonX"/> toggle mode (Unity <c>ToggleGroup</c> analogue).
 	/// Assign the same group on each member via <see cref="ButtonX.toggleGroup"/>.
 	/// </summary>
-	[AddComponentMenu("UI/ButtonX Toggle Group")]
+	[AddComponentMenu("UI (Canvas)/ButtonX Toggle Group")]
 	[DisallowMultipleComponent]
 	public class ButtonXToggleGroup : MonoBehaviour
 	{

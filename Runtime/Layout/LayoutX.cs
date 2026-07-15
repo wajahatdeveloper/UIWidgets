@@ -10,7 +10,7 @@ namespace AetherNexus.UIWidgets
 	/// </summary>
 	[ExecuteAlways]
 	[RequireComponent(typeof(RectTransform))]
-	[AddComponentMenu("UI/UIWidgets/Layout X")]
+	[AddComponentMenu("UI (Canvas)/Layout X")]
 	public class LayoutX : LayoutGroup
 	{
 		public enum LayoutMode

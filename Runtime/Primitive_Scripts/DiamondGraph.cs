@@ -4,7 +4,7 @@ using UnityEngine.UI;
 
 namespace AetherNexus.UIWidgets
 {
-    [AddComponentMenu("UI/Extensions/Primitives/Diamond Graph")]
+    [AddComponentMenu("UI (Canvas)/Extensions/Primitives/Diamond Graph")]
     public class DiamondGraph : UIPrimitiveBase
     {
         [SerializeField]

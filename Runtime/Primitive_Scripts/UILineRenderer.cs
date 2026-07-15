@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 namespace AetherNexus.UIWidgets
 {
-    [AddComponentMenu("UI/Extensions/Primitives/UILineRenderer")]
+    [AddComponentMenu("UI (Canvas)/Extensions/Primitives/UILineRenderer")]
     [RequireComponent(typeof(RectTransform))]
     public class UILineRenderer : UIPrimitiveBase
 	{

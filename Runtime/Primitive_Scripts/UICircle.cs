@@ -17,7 +17,7 @@ using UnityEngine.UI;
 
 namespace AetherNexus.UIWidgets
 {
-    [AddComponentMenu("UI/Extensions/Primitives/UI Circle")]
+    [AddComponentMenu("UI (Canvas)/Extensions/Primitives/UI Circle")]
     public class UICircle : UIPrimitiveBase
     {
         [Tooltip("The Arc Invert property will invert the construction of the Arc.")]

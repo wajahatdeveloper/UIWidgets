@@ -11,7 +11,7 @@ namespace AetherNexus.UIWidgets
 {
     [ExecuteInEditMode]
     [RequireComponent(typeof(RectTransform))]
-    [AddComponentMenu("UI/Extensions/Sliders/Range Slider", 34)]
+    [AddComponentMenu("UI (Canvas)/Extensions/Sliders/Range Slider", 34)]
     public class RangeSlider : Selectable, IDragHandler, IInitializePotentialDragHandler, ICanvasElement
     {
         public enum Direction

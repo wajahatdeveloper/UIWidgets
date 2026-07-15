@@ -8,7 +8,7 @@ using UnityEngine.UI;
 
 namespace AetherNexus.UIWidgets
 {
-    [AddComponentMenu("UI/Extensions/Primitives/Squircle")]
+    [AddComponentMenu("UI (Canvas)/Extensions/Primitives/Squircle")]
     public class UISquircle : UIPrimitiveBase
     {
         const float C = 1.0f;

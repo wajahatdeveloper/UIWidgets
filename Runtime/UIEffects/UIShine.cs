@@ -11,7 +11,7 @@ namespace AetherNexus.UIWidgets
     /// <see cref="Play"/> to trigger a single sweep.
     /// </summary>
     [RequireComponent(typeof(RectTransform))]
-    [AddComponentMenu("UI/Effects/UIWidgets/Shine")]
+    [AddComponentMenu("UI (Canvas)/Effects/Shine")]
     public class UIShine : MaskableGraphic
     {
         [SerializeField, Range(-1f, 1f)]

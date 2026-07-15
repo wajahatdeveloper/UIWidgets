@@ -9,7 +9,7 @@ using UnityEngine.UI;
 namespace AetherNexus.UIWidgets
 {
     [RequireComponent(typeof(Image))]
-    [AddComponentMenu("UI/Extensions/Sliders/Radial Slider")]
+    [AddComponentMenu("UI (Canvas)/Extensions/Sliders/Radial Slider")]
     public class RadialSlider : MonoBehaviour, IPointerEnterHandler, IPointerDownHandler, IPointerUpHandler, IDragHandler
     {
         private bool isPointerDown, isPointerReleased, lerpInProgress;

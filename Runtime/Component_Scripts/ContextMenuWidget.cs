@@ -94,7 +94,7 @@ namespace AetherNexus.UIWidgets
         }
     }
 
-    [AddComponentMenu("UI/Context Menu Widget")]
+    [AddComponentMenu("UI (Canvas)/Context Menu Widget")]
     public sealed class ContextMenuWidget : SingletonBehaviour<ContextMenuWidget>
     {
         [Header("References")]

@@ -10,7 +10,7 @@ using UnityEngine.UI;
 
 namespace AetherNexus.UIWidgets
 {
-    [AddComponentMenu("UI/ScrollList")]
+    [AddComponentMenu("UI (Canvas)/ScrollList")]
     public class ScrollList : MonoBehaviour, ISerializationCallbackReceiver
     {
         #region Events

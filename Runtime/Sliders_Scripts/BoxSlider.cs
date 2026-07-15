@@ -7,7 +7,7 @@ using UnityEngine.UI;
 namespace AetherNexus.UIWidgets
 {
     [RequireComponent(typeof(RectTransform))]
-    [AddComponentMenu("UI/Extensions/Sliders/BoxSlider")]
+    [AddComponentMenu("UI (Canvas)/Extensions/Sliders/BoxSlider")]
     public class BoxSlider : Selectable, IDragHandler, IInitializePotentialDragHandler, ICanvasElement
     {
         public enum Direction

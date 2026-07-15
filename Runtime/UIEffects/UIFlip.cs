@@ -10,7 +10,7 @@ namespace AetherNexus.UIWidgets
     [RequireComponent(typeof(RectTransform))]
     [RequireComponent(typeof(Graphic))]
     [DisallowMultipleComponent]
-    [AddComponentMenu("UI/Effects/UIWidgets/Flip")]
+    [AddComponentMenu("UI (Canvas)/Effects/Flip")]
     public class UIFlip : BaseMeshEffect
     {
         [SerializeField]

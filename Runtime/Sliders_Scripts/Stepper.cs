@@ -10,7 +10,7 @@ namespace AetherNexus.UIWidgets
 {
     // Stepper control
     [RequireComponent(typeof(RectTransform))]
-    [AddComponentMenu("UI/Extensions/Sliders/Stepper")]
+    [AddComponentMenu("UI (Canvas)/Extensions/Sliders/Stepper")]
     public class Stepper : UIBehaviour
     {
         private Selectable[] _sides;

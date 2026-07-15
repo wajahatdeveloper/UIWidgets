@@ -10,7 +10,7 @@ namespace AetherNexus.UIWidgets
     /// A scrollable list item component that handles display and interaction for list items.
     /// Supports automatic component finding and provides flexible configuration options.
     /// </summary>
-    [AddComponentMenu("UI/ScrollItemView")]
+    [AddComponentMenu("UI (Canvas)/ScrollItemView")]
     public class ScrollItemView : MonoBehaviour, IListItemBinder
     {
         /// <summary>
