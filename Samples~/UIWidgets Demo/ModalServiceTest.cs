@@ -12,7 +12,7 @@ namespace AetherNexus.UIWidgets
     public class ModalServiceTest : MonoBehaviour
     {
         [Header("Test Configuration")]
-        [Tooltip("Any PanelBase in the scene (Create via GameObject → UIWidgets → Containers → Panel).")]
+        [Tooltip("Any PanelBase in the scene (Create via GameObject → UI (Canvas) → Panel Base).")]
         public PanelBase demoPanel;
 
         public bool testOnStart;
@@ -77,7 +77,10 @@ namespace AetherNexus.UIWidgets
 
         private void OnGUI()
         {
-            float y = UIWidgetsDemoImgui.ModalY;
+            if (!UIWidgetsDemoImgui.IsSection(UIWidgetsDemoImgui.Section.Modals))
+                return;
+
+            float y = UIWidgetsDemoImgui.ContentY + 480f;
             if (UIWidgetsDemoImgui.Button(ref y, "Modal show")) TestShow();
             if (UIWidgetsDemoImgui.Button(ref y, "Modal hide")) TestHideCurrent();
             if (UIWidgetsDemoImgui.Button(ref y, "Panel.Show")) TestShowViaPanel();

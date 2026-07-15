@@ -101,26 +101,10 @@ namespace AetherNexus.UIWidgets.Editor
 
 		private static Transform GetOrCreateCanvas(Transform preferredParent = null)
 		{
-			// Check for existing Canvas
 			var existingCanvas = Object.FindFirstObjectByType<Canvas>();
 			if (existingCanvas != null)
-			{
 				return existingCanvas.transform;
-			}
 
-			// Try to use Canvas widget from asset
-			if (_cachedAsset != null && _widgetLookup != null)
-			{
-				if (_widgetLookup.TryGetValue("Canvas", out var canvasWidget) && canvasWidget.widgetPrefab != null)
-				{
-					var canvasPrefab = canvasWidget.widgetPrefab;
-					GameObject newCanvas = InstantiateWidget(canvasPrefab, preferredParent);
-					Undo.RegisterCreatedObjectUndo(newCanvas, "Create new Canvas");
-					return newCanvas.transform;
-				}
-			}
-
-			// Create standard Canvas
 			GameObject canvasGO = new GameObject("Canvas");
 			canvasGO.layer = LayerMask.NameToLayer("UI");
 			Canvas canvas = canvasGO.AddComponent<Canvas>();
@@ -129,9 +113,7 @@ namespace AetherNexus.UIWidgets.Editor
 			canvasGO.AddComponent<GraphicRaycaster>();
 
 			if (preferredParent != null)
-			{
 				canvasGO.transform.SetParent(preferredParent);
-			}
 
 			Undo.RegisterCreatedObjectUndo(canvasGO, "Create new Canvas");
 			return canvasGO.transform;
@@ -139,28 +121,9 @@ namespace AetherNexus.UIWidgets.Editor
 
 		private static void EnsureEventSystemExists()
 		{
-			var existingEventSystem = Object.FindFirstObjectByType<EventSystem>();
-			if (existingEventSystem != null)
-			{
+			if (Object.FindFirstObjectByType<EventSystem>() != null)
 				return;
-			}
 
-			// Try to use EventSystem widget from asset
-			if (_cachedAsset != null && _widgetLookup != null)
-			{
-				if (_widgetLookup.TryGetValue("Utility", out var utilityWidget) && utilityWidget.widgetVariations != null)
-				{
-					var eventSystemVariation = utilityWidget.widgetVariations.FirstOrDefault(v => v.widgetName == "EventSystem");
-					if (eventSystemVariation != null && eventSystemVariation.widgetPrefab != null)
-					{
-						GameObject newEventSystem = InstantiateWidget(eventSystemVariation.widgetPrefab);
-						Undo.RegisterCreatedObjectUndo(newEventSystem, "Create new EventSystem");
-						return;
-					}
-				}
-			}
-
-			// Create standard EventSystem
 			GameObject es = new GameObject("EventSystem");
 			es.AddComponent<EventSystem>();
 			es.AddComponent<StandaloneInputModule>();
@@ -246,7 +209,6 @@ namespace AetherNexus.UIWidgets.Editor
 			Selection.activeGameObject = itemObject;
 		}
 
-		/// <summary>Create from a prefab when widget has no lookup key (e.g. Screens with empty widgetName).</summary>
 		private static void CreateFromPrefab(GameObject prefab, bool noCanvasRequired, MenuCommand menuCommand, string undoLabel)
 		{
 			if (!TryLoadUIWidgetsAsset() || prefab == null) return;
@@ -269,139 +231,132 @@ namespace AetherNexus.UIWidgets.Editor
 			Selection.activeGameObject = itemObject;
 		}
 
-		private static void CreateScreenVariation(string variationName, MenuCommand menuCommand)
+		private static void CreateVariationHandler(string widgetName, string variationName, MenuCommand menuCommand)
 		{
-			if (!TryLoadUIWidgetsAsset() || _cachedAsset?.widgets == null) return;
-			var screensWidget = _cachedAsset.widgets.FirstOrDefault(w => w.category == "Screens" && string.IsNullOrEmpty(w.widgetName));
-			var variation = screensWidget?.widgetVariations?.FirstOrDefault(v => v.widgetName == variationName);
-			if (variation?.widgetPrefab == null) return;
+			if (!TryLoadUIWidgetsAsset() || !_widgetLookup.TryGetValue(widgetName, out var widget))
+				return;
+
+			var variation = widget.widgetVariations?.FirstOrDefault(v => v.widgetName == variationName);
+			if (variation?.widgetPrefab == null)
+				return;
+
 			CreateFromPrefab(variation.widgetPrefab, variation.noCanvasRequired, menuCommand, $"Create {variationName}");
 		}
 
-		private static void CreateVariationHandler(string widgetName, string variationName, MenuCommand menuCommand)
-		{
-			if (TryLoadUIWidgetsAsset() && _widgetLookup.TryGetValue(widgetName, out var widget))
-			{
-				var variation = widget.widgetVariations?.FirstOrDefault(v => v.widgetName == variationName);
-				if (variation != null && variation.widgetPrefab != null)
-					CreateWidgetFromAsset(widgetName, menuCommand, variation.widgetPrefab);
-			}
-		}
+		/// <summary>Create a Singletons-catalog variation (Dialog, Fader, ModalService, etc.).</summary>
+		private static void CreateSingletonVariation(string variationName, MenuCommand menuCommand)
+			=> CreateVariationHandler("Singletons", variationName, menuCommand);
 
 		#endregion
 
-		#region Menu Items - GameObject/UIWidgets (top-level, before UI)
+		#region Menu Items - GameObject/UI (Canvas) (flat siblings of Unity stock)
 
-		const string MenuRoot = "GameObject/UIWidgets/";
+		// Flat under Unity 6's UI (Canvas) menu — unique leaf names avoid clashing with stock items.
+		// Priorities sit after typical Unity/TMP UI entries (~2000).
+		const string MenuRoot = "GameObject/UI (Canvas)/";
+		const int MenuPriority = 2100;
 
-		// ----- Containers (10) -----
-		[MenuItem(MenuRoot + "Containers/Panel", false, 10)]
+		[MenuItem(MenuRoot + "Panel Base", false, MenuPriority)]
 		private static void CreatePanel(MenuCommand menuCommand) => CreateWidgetFromAsset("Panel", menuCommand);
 
-		[MenuItem(MenuRoot + "Containers/Canvas", false, 11)]
-		private static void CreateCanvas(MenuCommand menuCommand) => CreateWidgetFromAsset("Canvas", menuCommand);
+		[MenuItem(MenuRoot + "ScrollList", false, MenuPriority + 1)]
+		private static void CreateScrollList(MenuCommand menuCommand) => CreateWidgetFromAsset("ScrollList", menuCommand);
 
-		[MenuItem(MenuRoot + "Containers/ScollableList", false, 12)]
-		private static void CreateScollableList(MenuCommand menuCommand) => CreateWidgetFromAsset("ScollableList", menuCommand);
+		[MenuItem(MenuRoot + "ScrollList/ScrollList_Horizontal", false, MenuPriority + 2)]
+		private static void CreateScrollListHorizontal(MenuCommand menuCommand) => CreateVariationHandler("ScrollList", "ScrollList_Horizontal", menuCommand);
 
-		[MenuItem(MenuRoot + "Containers/Tabs", false, 13)]
+		[MenuItem(MenuRoot + "ScrollList/ScrollList_Vertical", false, MenuPriority + 3)]
+		private static void CreateScrollListVertical(MenuCommand menuCommand) => CreateVariationHandler("ScrollList", "ScrollList_Vertical", menuCommand);
+
+		[MenuItem(MenuRoot + "Tabs", false, MenuPriority + 4)]
 		private static void CreateTabs(MenuCommand menuCommand) => CreateWidgetFromAsset("Tabs", menuCommand);
 
-		// ----- Buttons (20): ButtonX submenu (no duplicate - default under submenu) -----
-		[MenuItem(MenuRoot + "Buttons/ButtonX/ButtonX", false, 20)]
-		private static void CreateButtonXDefault(MenuCommand menuCommand) => CreateWidgetFromAsset("ButtonX", menuCommand);
-
-		[MenuItem(MenuRoot + "Buttons/ButtonX/ButtonTMP", false, 21)]
-		private static void CreateButtonTMP(MenuCommand menuCommand) => CreateVariationHandler("ButtonX", "ButtonTMP", menuCommand);
-
-		[MenuItem(MenuRoot + "Buttons/Toggle/Toggle", false, 23)]
-		private static void CreateToggle(MenuCommand menuCommand) => CreateWidgetFromAsset("Toggle", menuCommand);
-
-		[MenuItem(MenuRoot + "Buttons/Toggle/Toggle Image", false, 24)]
-		private static void CreateToggleImage(MenuCommand menuCommand) => CreateVariationHandler("Toggle", "Toggle Image", menuCommand);
-
-		[MenuItem(MenuRoot + "Buttons/Stepper", false, 25)]
-		private static void CreateStepper(MenuCommand menuCommand) => CreateWidgetFromAsset("Stepper", menuCommand);
-
-		// ----- DropDown (30) -----
-		[MenuItem(MenuRoot + "DropDown/DropDown", false, 30)]
-		private static void CreateDropDown(MenuCommand menuCommand) => CreateWidgetFromAsset("DropDown", menuCommand);
-
-		// ----- Image (40) -----
-		[MenuItem(MenuRoot + "Image/Image", false, 40)]
-		private static void CreateImage(MenuCommand menuCommand) => CreateWidgetFromAsset("Image", menuCommand);
-
-		[MenuItem(MenuRoot + "Image/RawImage", false, 41)]
-		private static void CreateRawImage(MenuCommand menuCommand) => CreateVariationHandler("Image", "RawImage", menuCommand);
-
-		// ----- InputField (50) -----
-		[MenuItem(MenuRoot + "InputField/InputField", false, 50)]
-		private static void CreateInputField(MenuCommand menuCommand) => CreateWidgetFromAsset("InputField", menuCommand);
-
-		// ----- Slider (60) - asset category is "Slider" -----
-		[MenuItem(MenuRoot + "Slider/Slider", false, 60)]
-		private static void CreateSlider(MenuCommand menuCommand) => CreateWidgetFromAsset("Slider", menuCommand);
-
-		[MenuItem(MenuRoot + "Slider/BoxSlider", false, 61)]
-		private static void CreateBoxSlider(MenuCommand menuCommand) => CreateVariationHandler("Slider", "BoxSlider", menuCommand);
-
-		[MenuItem(MenuRoot + "Slider/MinMaxSlider", false, 62)]
-		private static void CreateMinMaxSlider(MenuCommand menuCommand) => CreateVariationHandler("Slider", "MinMaxSlider", menuCommand);
-
-		[MenuItem(MenuRoot + "Slider/RadialSlider", false, 63)]
-		private static void CreateRadialSlider(MenuCommand menuCommand) => CreateVariationHandler("Slider", "RadialSlider", menuCommand);
-
-		[MenuItem(MenuRoot + "Slider/RangeSlider", false, 64)]
-		private static void CreateRangeSlider(MenuCommand menuCommand) => CreateVariationHandler("Slider", "RangeSlider", menuCommand);
-
-		// ----- Text (70) -----
-		[MenuItem(MenuRoot + "Text/Text", false, 70)]
-		private static void CreateText(MenuCommand menuCommand) => CreateWidgetFromAsset("Text", menuCommand);
-
-		// ----- Containers: Cards (75) - asset has category Containers, widgetName Cards, variations only -----
-		[MenuItem(MenuRoot + "Containers/Cards/CardExpanding", false, 75)]
+		[MenuItem(MenuRoot + "Cards/CardExpanding", false, MenuPriority + 5)]
 		private static void CreateCardExpanding(MenuCommand menuCommand) => CreateVariationHandler("Cards", "CardExpanding", menuCommand);
 
-		[MenuItem(MenuRoot + "Containers/Cards/CardPopup", false, 76)]
+		[MenuItem(MenuRoot + "Cards/CardPopup", false, MenuPriority + 6)]
 		private static void CreateCardPopup(MenuCommand menuCommand) => CreateVariationHandler("Cards", "CardPopup", menuCommand);
 
-		[MenuItem(MenuRoot + "Containers/Cards/CardStack", false, 77)]
+		[MenuItem(MenuRoot + "Cards/CardStack", false, MenuPriority + 7)]
 		private static void CreateCardStack(MenuCommand menuCommand) => CreateVariationHandler("Cards", "CardStack", menuCommand);
 
-		// ----- Utility (80) -----
-		[MenuItem(MenuRoot + "Utility/Tooltip/Tooltip", false, 80)]
+		[MenuItem(MenuRoot + "ButtonX", false, MenuPriority + 10)]
+		private static void CreateButtonXDefault(MenuCommand menuCommand) => CreateWidgetFromAsset("ButtonX", menuCommand);
+
+		[MenuItem(MenuRoot + "ButtonX Toggle Group", false, MenuPriority + 11)]
+		private static void CreateButtonXToggleGroup(MenuCommand menuCommand)
+		{
+			Transform parent = null;
+			if (menuCommand.context is GameObject contextGO && contextGO.GetComponent<RectTransform>() != null)
+				parent = contextGO.transform;
+			if (parent == null && Selection.activeTransform != null && Selection.activeTransform.GetComponent<RectTransform>() != null)
+				parent = Selection.activeTransform;
+			if (parent == null)
+				parent = GetOrCreateCanvas();
+			EnsureEventSystemExists();
+
+			var go = new GameObject("ButtonXToggleGroup", typeof(RectTransform), typeof(ButtonXToggleGroup));
+			go.layer = LayerMask.NameToLayer("UI");
+			go.transform.SetParent(parent, false);
+			var rt = go.GetComponent<RectTransform>();
+			rt.anchorMin = Vector2.zero;
+			rt.anchorMax = Vector2.one;
+			rt.offsetMin = Vector2.zero;
+			rt.offsetMax = Vector2.zero;
+			Undo.RegisterCreatedObjectUndo(go, "Create ButtonX Toggle Group");
+			Selection.activeGameObject = go;
+		}
+
+		[MenuItem(MenuRoot + "Stepper", false, MenuPriority + 12)]
+		private static void CreateStepper(MenuCommand menuCommand) => CreateWidgetFromAsset("Stepper", menuCommand);
+
+		[MenuItem(MenuRoot + "Sliders/BoxSlider", false, MenuPriority + 20)]
+		private static void CreateBoxSlider(MenuCommand menuCommand) => CreateVariationHandler("Slider", "BoxSlider", menuCommand);
+
+		[MenuItem(MenuRoot + "Sliders/MinMaxSlider", false, MenuPriority + 21)]
+		private static void CreateMinMaxSlider(MenuCommand menuCommand) => CreateVariationHandler("Slider", "MinMaxSlider", menuCommand);
+
+		[MenuItem(MenuRoot + "Sliders/RadialSlider", false, MenuPriority + 22)]
+		private static void CreateRadialSlider(MenuCommand menuCommand) => CreateVariationHandler("Slider", "RadialSlider", menuCommand);
+
+		[MenuItem(MenuRoot + "Sliders/RangeSlider", false, MenuPriority + 23)]
+		private static void CreateRangeSlider(MenuCommand menuCommand) => CreateVariationHandler("Slider", "RangeSlider", menuCommand);
+
+		[MenuItem(MenuRoot + "Tooltip/Tooltip", false, MenuPriority + 30)]
 		private static void CreateTooltip(MenuCommand menuCommand) => CreateWidgetFromAsset("Tooltip", menuCommand);
 
-		[MenuItem(MenuRoot + "Utility/Tooltip/TooltipTrigger", false, 81)]
+		[MenuItem(MenuRoot + "Tooltip/TooltipTrigger", false, MenuPriority + 31)]
 		private static void CreateTooltipTrigger(MenuCommand menuCommand) => CreateVariationHandler("Tooltip", "TooltipTrigger", menuCommand);
 
-		[MenuItem(MenuRoot + "Utility/Setup Default State", false, 82)]
-		private static void CreateSetupDefaultState(MenuCommand menuCommand) => CreateVariationHandler("Utility", "Setup Default State", menuCommand);
+		[MenuItem(MenuRoot + "Singletons/Dialog Screen", false, MenuPriority + 40)]
+		private static void CreateDialogScreen(MenuCommand menuCommand) => CreateSingletonVariation("Dialog Screen", menuCommand);
 
-		[MenuItem(MenuRoot + "Utility/EventSystem", false, 83)]
-		private static void CreateEventSystemWidget(MenuCommand menuCommand) => CreateVariationHandler("Utility", "EventSystem", menuCommand);
+		[MenuItem(MenuRoot + "Singletons/Fader Screen", false, MenuPriority + 41)]
+		private static void CreateFaderScreen(MenuCommand menuCommand) => CreateSingletonVariation("Fader Screen", menuCommand);
 
-		// ----- Screens (90) - variation-only in asset -----
-		[MenuItem(MenuRoot + "Screens/Dialog Screen", false, 90)]
-		private static void CreateDialogScreen(MenuCommand menuCommand) => CreateScreenVariation("Dialog Screen", menuCommand);
+		[MenuItem(MenuRoot + "Singletons/Input Dialog Screen", false, MenuPriority + 42)]
+		private static void CreateInputDialogScreen(MenuCommand menuCommand) => CreateSingletonVariation("Input Dialog Screen", menuCommand);
 
-		[MenuItem(MenuRoot + "Screens/Fader Sceen", false, 91)]
-		private static void CreateFaderScreen(MenuCommand menuCommand) => CreateScreenVariation("Fader Sceen", menuCommand);
+		[MenuItem(MenuRoot + "Singletons/Loading Screen", false, MenuPriority + 43)]
+		private static void CreateLoadingScreen(MenuCommand menuCommand) => CreateSingletonVariation("Loading Screen", menuCommand);
 
-		[MenuItem(MenuRoot + "Screens/Input Dialog Screen", false, 92)]
-		private static void CreateInputDialogScreen(MenuCommand menuCommand) => CreateScreenVariation("Input Dialog Screen", menuCommand);
+		[MenuItem(MenuRoot + "Singletons/Wait Screen", false, MenuPriority + 44)]
+		private static void CreateWaitScreen(MenuCommand menuCommand) => CreateSingletonVariation("Wait Screen", menuCommand);
 
-		[MenuItem(MenuRoot + "Screens/Loading Screen", false, 93)]
-		private static void CreateLoadingScreen(MenuCommand menuCommand) => CreateScreenVariation("Loading Screen", menuCommand);
+		[MenuItem(MenuRoot + "Singletons/Line Message Screen", false, MenuPriority + 45)]
+		private static void CreateLineMessageScreen(MenuCommand menuCommand) => CreateSingletonVariation("Line Message Screen", menuCommand);
 
-		[MenuItem(MenuRoot + "Screens/Wait Screen", false, 94)]
-		private static void CreateWaitScreen(MenuCommand menuCommand) => CreateScreenVariation("Wait Screen", menuCommand);
+		[MenuItem(MenuRoot + "Singletons/Toast Message Canvas", false, MenuPriority + 46)]
+		private static void CreateToastMessageCanvas(MenuCommand menuCommand) => CreateSingletonVariation("Toast Message Canvas", menuCommand);
 
-		[MenuItem(MenuRoot + "Screens/Line Message Screen", false, 95)]
-		private static void CreateLineMessageScreen(MenuCommand menuCommand) => CreateScreenVariation("Line Message Screen", menuCommand);
+		[MenuItem(MenuRoot + "Singletons/ModalService", false, MenuPriority + 47)]
+		private static void CreateModalService(MenuCommand menuCommand) => CreateSingletonVariation("ModalService", menuCommand);
 
-		[MenuItem(MenuRoot + "Screens/Toast Message Canvas", false, 96)]
-		private static void CreateToastMessageCanvas(MenuCommand menuCommand) => CreateScreenVariation("Toast Message Canvas", menuCommand);
+		[MenuItem(MenuRoot + "Singletons/ContextMenu", false, MenuPriority + 48)]
+		private static void CreateContextMenu(MenuCommand menuCommand) => CreateSingletonVariation("ContextMenu", menuCommand);
+
+		[MenuItem(MenuRoot + "Singletons/PopupText", false, MenuPriority + 49)]
+		private static void CreatePopupText(MenuCommand menuCommand) => CreateSingletonVariation("PopupText", menuCommand);
 
 		#endregion
 	}

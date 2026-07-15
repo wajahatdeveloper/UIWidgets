@@ -15,12 +15,12 @@ User-facing guides for `com.aethernexus.uiwidgets`.
 
 | Menu | Purpose |
 |------|---------|
-| **Window → UIWidgets → UI Widgets...** | Widget prefab browser |
-| **GameObject → UIWidgets → …** | Create containers, ButtonX, sliders, text, etc. |
+| **Window → UIWidgets → UI Widgets...** | Widget prefab browser (includes **Default UI** stock creates) |
+| **GameObject → UI (Canvas) → …** | Create unique widgets flat under Unity UI (Panel Base, ButtonX, ScrollList, Singletons, …) |
 | **Tools → UIWidgets → Settings...** | Project settings for UI Widgets |
 | **Tools → UIWidgets → Scene Picker Enabled** | Toggle scene picking |
 | **CONTEXT → Button → Upgrade To ButtonX** | Convert stock Button |
-| **GameObject → UI → Upgrade Text to TextMeshProUGUI** | Migrate legacy Text |
+| **GameObject → UI (Canvas) → Upgrade Text to TextMeshProUGUI** | Migrate legacy Text |
 
 ## Requires
 

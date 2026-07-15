@@ -119,20 +119,27 @@ MonoBehaviour:
   m_Interactable: 1
   m_TargetGraphic: {fileID: 3050870481711467613}
   _serializedText: 
+  textMesh: {fileID: 2927959672269771653}
+  image: {fileID: 3050870481711467613}
   visualTransition: 0
   normalColor: {r: 1, g: 1, b: 1, a: 1}
   highlightColor: {r: 0, g: 1, b: 1, a: 1}
   pressedColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
   disabledColor: {r: 0, g: 0, b: 0, a: 1}
   selectedColor: {r: 0.9, g: 0.9, b: 1, a: 1}
+  extraGraphicsForTint: []
   normalSprite: {fileID: 0}
   highlightSprite: {fileID: 0}
   pressedSprite: {fileID: 0}
   disabledSprite: {fileID: 0}
   selectedSprite: {fileID: 0}
-  textMesh: {fileID: 2927959672269771653}
-  image: {fileID: 3050870481711467613}
-  extraGraphicsForTint: []
+  clickCooldownSeconds: 0.05
+  enableDoubleClick: 1
+  doubleClickInterval: 0.25
+  enableLongPress: 1
+  longPressThreshold: 0.5
+  enableHoldRepeat: 0
+  holdRepeatInterval: 0.2
   OnClicked:
     m_PersistentCalls:
       m_Calls: []
@@ -142,26 +149,21 @@ MonoBehaviour:
   OnDeselected:
     m_PersistentCalls:
       m_Calls: []
-  OnLongPressed:
+  OnDoubleClicked:
     m_PersistentCalls:
       m_Calls: []
-  OnDoubleClicked:
+  OnLongPressed:
     m_PersistentCalls:
       m_Calls: []
   OnHoldRepeated:
     m_PersistentCalls:
       m_Calls: []
-  enableDoubleClick: 1
-  doubleClickInterval: 0.25
-  enableLongPress: 1
-  longPressThreshold: 0.5
-  enableHoldRepeat: 0
-  holdRepeatInterval: 0.2
-  clickCooldownSeconds: 0.05
   _isLoading: 0
   loadingText: 
   toggleMode: 0
   IsOn: 0
+  toggleImage: {fileID: 0}
+  toggleGroup: {fileID: 0}
   OnToggledOn:
     m_PersistentCalls:
       m_Calls: []
@@ -377,7 +379,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
@@ -574,20 +576,27 @@ MonoBehaviour:
   m_Interactable: 1
   m_TargetGraphic: {fileID: 2792072183722918024}
   _serializedText: 
+  textMesh: {fileID: 6004827408318998944}
+  image: {fileID: 2792072183722918024}
   visualTransition: 0
   normalColor: {r: 1, g: 1, b: 1, a: 1}
   highlightColor: {r: 0, g: 1, b: 1, a: 1}
   pressedColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
   disabledColor: {r: 0, g: 0, b: 0, a: 1}
   selectedColor: {r: 0.9, g: 0.9, b: 1, a: 1}
+  extraGraphicsForTint: []
   normalSprite: {fileID: 0}
   highlightSprite: {fileID: 0}
   pressedSprite: {fileID: 0}
   disabledSprite: {fileID: 0}
   selectedSprite: {fileID: 0}
-  textMesh: {fileID: 6004827408318998944}
-  image: {fileID: 2792072183722918024}
-  extraGraphicsForTint: []
+  clickCooldownSeconds: 0.05
+  enableDoubleClick: 1
+  doubleClickInterval: 0.25
+  enableLongPress: 1
+  longPressThreshold: 0.5
+  enableHoldRepeat: 0
+  holdRepeatInterval: 0.2
   OnClicked:
     m_PersistentCalls:
       m_Calls: []
@@ -597,26 +606,21 @@ MonoBehaviour:
   OnDeselected:
     m_PersistentCalls:
       m_Calls: []
-  OnLongPressed:
+  OnDoubleClicked:
     m_PersistentCalls:
       m_Calls: []
-  OnDoubleClicked:
+  OnLongPressed:
     m_PersistentCalls:
       m_Calls: []
   OnHoldRepeated:
     m_PersistentCalls:
       m_Calls: []
-  enableDoubleClick: 1
-  doubleClickInterval: 0.25
-  enableLongPress: 1
-  longPressThreshold: 0.5
-  enableHoldRepeat: 0
-  holdRepeatInterval: 0.2
-  clickCooldownSeconds: 0.05
   _isLoading: 0
   loadingText: 
   toggleMode: 1
   IsOn: 1
+  toggleImage: {fileID: 0}
+  toggleGroup: {fileID: 0}
   OnToggledOn:
     m_PersistentCalls:
       m_Calls: []
@@ -786,7 +790,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:

@@ -67,7 +67,10 @@ namespace AetherNexus.UIWidgets
 
         private void OnGUI()
         {
-            float y = UIWidgetsDemoImgui.FaderY;
+            if (!UIWidgetsDemoImgui.IsSection(UIWidgetsDemoImgui.Section.Modals))
+                return;
+
+            float y = UIWidgetsDemoImgui.ContentY + 160f;
             if (UIWidgetsDemoImgui.Button(ref y, "Fade In")) TestFadeToBlack();
             if (UIWidgetsDemoImgui.Button(ref y, "Fade Out")) TestFadeFromBlack();
             if (UIWidgetsDemoImgui.Button(ref y, "RoundTrip")) TestFadeRoundTrip();

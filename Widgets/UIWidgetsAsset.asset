@@ -21,101 +21,7 @@ MonoBehaviour:
     widgetVariations: []
     noCanvasRequired: 0
   - category: Containers
-    widgetName: Canvas
-    widgetIcon: {fileID: 2800000, guid: 81f2a271ac684f84995a85b7bd748229, type: 3}
-    widgetPrefab: {fileID: 3845659457530757892, guid: 92bf0133442900247a2b0142af84d35a, type: 3}
-    widgetVariations: []
-    noCanvasRequired: 1
-  - category: Buttons
-    widgetName: ButtonX
-    widgetIcon: {fileID: 2800000, guid: 25de3d14ac8faaf4084eeb98ea9fd0b2, type: 3}
-    widgetPrefab: {fileID: 7154508656627539501, guid: 8b54b0f2d45f593408d5ba0f3a5f51e2, type: 3}
-    widgetVariations:
-    - category: 
-      widgetName: ButtonTMP
-      widgetIcon: {fileID: 0}
-      widgetPrefab: {fileID: 1156636508452190963, guid: 8ecf91cfbfa560148a6892454e56696c, type: 3}
-      noCanvasRequired: 0
-    noCanvasRequired: 0
-  - category: DropDown
-    widgetName: DropDown
-    widgetIcon: {fileID: 2800000, guid: a6fbad3db2cb062439e3b541d75ac0d8, type: 3}
-    widgetPrefab: {fileID: 3012145152808184660, guid: 146786dbd43f8dc45bc1e964653ef6c5, type: 3}
-    widgetVariations: []
-    noCanvasRequired: 0
-  - category: Image
-    widgetName: Image
-    widgetIcon: {fileID: 2800000, guid: 245c4b57d95d91a479b7f3ebabf87534, type: 3}
-    widgetPrefab: {fileID: 3014086807536824623, guid: 61244a8c52598634fbf6ca9e31ad2ba9, type: 3}
-    widgetVariations:
-    - category: 
-      widgetName: RawImage
-      widgetIcon: {fileID: 2800000, guid: ef423b8ce95a34646b065e508ee40e6b, type: 3}
-      widgetPrefab: {fileID: 121474256250356228, guid: c08c7991d1c3ab140861d85282c7ee78, type: 3}
-      noCanvasRequired: 0
-    noCanvasRequired: 0
-  - category: InputField
-    widgetName: InputField
-    widgetIcon: {fileID: 2800000, guid: 2a09cb1f29b81014e9146fb61c1a7b5a, type: 3}
-    widgetPrefab: {fileID: 7871950666871334397, guid: 1be9e1e7ff7292241bdec25130d9c214, type: 3}
-    widgetVariations: []
-    noCanvasRequired: 0
-  - category: Slider
-    widgetName: Slider
-    widgetIcon: {fileID: 2800000, guid: e61a02a20e3d1f240aa4855cc722cf0d, type: 3}
-    widgetPrefab: {fileID: 6487638577052548507, guid: 9718c99558e3d544bb76efb56fbdec57, type: 3}
-    widgetVariations:
-    - category: 
-      widgetName: BoxSlider
-      widgetIcon: {fileID: 0}
-      widgetPrefab: {fileID: 1810572310541251333, guid: e02eb693d101e3b48b3573bd7f702916, type: 3}
-      noCanvasRequired: 0
-    - category: 
-      widgetName: MinMaxSlider
-      widgetIcon: {fileID: 0}
-      widgetPrefab: {fileID: 6569942549274396846, guid: e58b4386123f7db41a818078f6bfc0c1, type: 3}
-      noCanvasRequired: 0
-    - category: 
-      widgetName: RadialSlider
-      widgetIcon: {fileID: 0}
-      widgetPrefab: {fileID: 1947320061952695761, guid: b339e6e3ea1769f40894af08e2c09012, type: 3}
-      noCanvasRequired: 0
-    - category: 
-      widgetName: RangeSlider
-      widgetIcon: {fileID: 0}
-      widgetPrefab: {fileID: 8514468919671152268, guid: 66039cc16e70b8649b35ac05805891d9, type: 3}
-      noCanvasRequired: 0
-    noCanvasRequired: 0
-  - category: Text
-    widgetName: Text
-    widgetIcon: {fileID: 2800000, guid: 4e82ffd0b4cc7f8488f2faa12fb9375c, type: 3}
-    widgetPrefab: {fileID: 8116212762529532688, guid: 767a2122a93a207438c596e421068159, type: 3}
-    widgetVariations: []
-    noCanvasRequired: 0
-  - category: Buttons
-    widgetName: Toggle
-    widgetIcon: {fileID: 2800000, guid: 951530470549f6a409e7d0a6e0c2fb90, type: 3}
-    widgetPrefab: {fileID: 4854511399452410352, guid: 6eaf121b9e41c7746bf2eb964bcb9aa5, type: 3}
-    widgetVariations:
-    - category: 
-      widgetName: Toggle Image
-      widgetIcon: {fileID: 0}
-      widgetPrefab: {fileID: 545129815650857982, guid: 621781f7c1853934b94bbd4f52b8b1ee, type: 3}
-      noCanvasRequired: 0
-    noCanvasRequired: 0
-  - category: Utility
-    widgetName: Tooltip
-    widgetIcon: {fileID: 0}
-    widgetPrefab: {fileID: 2457912384815723637, guid: 3e2a3d13165a00d4b87b0ee3dab49236, type: 3}
-    widgetVariations:
-    - category: 
-      widgetName: TooltipTrigger
-      widgetIcon: {fileID: 0}
-      widgetPrefab: {fileID: 605793433359231105, guid: 5492a802049d67d46959ea268dbc449b, type: 3}
-      noCanvasRequired: 0
-    noCanvasRequired: 0
-  - category: Containers
-    widgetName: ScollableList
+    widgetName: ScrollList
     widgetIcon: {fileID: 0}
     widgetPrefab: {fileID: 6410678704279909407, guid: 3f79c95dd33caa8408e238e6415c6e06, type: 3}
     widgetVariations:
@@ -134,12 +40,6 @@ MonoBehaviour:
     widgetName: Tabs
     widgetIcon: {fileID: 0}
     widgetPrefab: {fileID: 8955077707855930936, guid: f8ff3683701423c42b6f3c00e7615f82, type: 3}
-    widgetVariations: []
-    noCanvasRequired: 0
-  - category: Buttons
-    widgetName: Stepper
-    widgetIcon: {fileID: 0}
-    widgetPrefab: {fileID: 558819231734034759, guid: 22acede48536bd24f89a3ef170626d4e, type: 3}
     widgetVariations: []
     noCanvasRequired: 0
   - category: Containers
@@ -163,24 +63,20 @@ MonoBehaviour:
       widgetPrefab: {fileID: 1842270150501959850, guid: a3bc48b54c4295549b784a4f5dc60d21, type: 3}
       noCanvasRequired: 0
     noCanvasRequired: 0
-  - category: Utility
-    widgetName: Utility
+  - category: Buttons
+    widgetName: ButtonX
+    widgetIcon: {fileID: 2800000, guid: 25de3d14ac8faaf4084eeb98ea9fd0b2, type: 3}
+    widgetPrefab: {fileID: 7154508656627539501, guid: 8b54b0f2d45f593408d5ba0f3a5f51e2, type: 3}
+    widgetVariations: []
+    noCanvasRequired: 0
+  - category: Buttons
+    widgetName: Stepper
     widgetIcon: {fileID: 0}
-    widgetPrefab: {fileID: 0}
-    widgetVariations:
-    - category: Utility
-      widgetName: Setup Default State
-      widgetIcon: {fileID: 2800000, guid: 0fa7be9b9c7f73d4e858999dd305bc5a, type: 3}
-      widgetPrefab: {fileID: 349067503083571467, guid: 6a5299d58c39e934a810ea74b1150ba3, type: 3}
-      noCanvasRequired: 1
-    - category: Utility
-      widgetName: EventSystem
-      widgetIcon: {fileID: 2800000, guid: 15c7f095c44e6a84fab01b72e8e935e8, type: 3}
-      widgetPrefab: {fileID: 5159108418508599722, guid: f6cb77ee6578c5a46bda18b35c5f1abb, type: 3}
-      noCanvasRequired: 1
-    noCanvasRequired: 1
-  - category: Screens
-    widgetName: 
+    widgetPrefab: {fileID: 558819231734034759, guid: 22acede48536bd24f89a3ef170626d4e, type: 3}
+    widgetVariations: []
+    noCanvasRequired: 0
+  - category: Singletons
+    widgetName: Singletons
     widgetIcon: {fileID: 0}
     widgetPrefab: {fileID: 0}
     widgetVariations:
@@ -190,7 +86,7 @@ MonoBehaviour:
       widgetPrefab: {fileID: 5446628509800768888, guid: c0c00352c1cbb9345b60da3eefd4ec69, type: 3}
       noCanvasRequired: 0
     - category: 
-      widgetName: Fader Sceen
+      widgetName: Fader Screen
       widgetIcon: {fileID: 0}
       widgetPrefab: {fileID: 6231986757780369994, guid: 89bf150b7d571124a809539ae7e40165, type: 3}
       noCanvasRequired: 0
@@ -215,8 +111,71 @@ MonoBehaviour:
       widgetPrefab: {fileID: 2245382841028542011, guid: 0b2e2d4644de25243b0e3b1da1532b27, type: 3}
       noCanvasRequired: 0
     - category: 
-      widgetName: Toast Message Canvas
+      widgetName: Toast Message
       widgetIcon: {fileID: 0}
       widgetPrefab: {fileID: 1262329948662846, guid: 78b7351cdae287d4cb683282c4800e4f, type: 3}
+      noCanvasRequired: 0
+    - category: 
+      widgetName: ModalService
+      widgetIcon: {fileID: 0}
+      widgetPrefab: {fileID: 6767158146438252116, guid: b02e7371939609f47bd74f741be52a65, type: 3}
       noCanvasRequired: 1
+    - category: 
+      widgetName: ContextMenu
+      widgetIcon: {fileID: 0}
+      widgetPrefab: {fileID: 1498659863506877653, guid: 90bbafc0075f5a44caaaddd8858d1777, type: 3}
+      noCanvasRequired: 0
+    - category: 
+      widgetName: PopupText
+      widgetIcon: {fileID: 0}
+      widgetPrefab: {fileID: 4314666065513163139, guid: a284a5e80e643224c974229d0120e660, type: 3}
+      noCanvasRequired: 0
     noCanvasRequired: 0
+  - category: Sliders
+    widgetName: Slider
+    widgetIcon: {fileID: 2800000, guid: e61a02a20e3d1f240aa4855cc722cf0d, type: 3}
+    widgetPrefab: {fileID: 0}
+    widgetVariations:
+    - category: 
+      widgetName: BoxSlider
+      widgetIcon: {fileID: 0}
+      widgetPrefab: {fileID: 1810572310541251333, guid: e02eb693d101e3b48b3573bd7f702916, type: 3}
+      noCanvasRequired: 0
+    - category: 
+      widgetName: MinMaxSlider
+      widgetIcon: {fileID: 0}
+      widgetPrefab: {fileID: 6569942549274396846, guid: e58b4386123f7db41a818078f6bfc0c1, type: 3}
+      noCanvasRequired: 0
+    - category: 
+      widgetName: RadialSlider
+      widgetIcon: {fileID: 0}
+      widgetPrefab: {fileID: 1947320061952695761, guid: b339e6e3ea1769f40894af08e2c09012, type: 3}
+      noCanvasRequired: 0
+    - category: 
+      widgetName: RangeSlider
+      widgetIcon: {fileID: 0}
+      widgetPrefab: {fileID: 8514468919671152268, guid: 66039cc16e70b8649b35ac05805891d9, type: 3}
+      noCanvasRequired: 0
+    noCanvasRequired: 0
+  - category: Utility
+    widgetName: Tooltip
+    widgetIcon: {fileID: 0}
+    widgetPrefab: {fileID: 2457912384815723637, guid: 3e2a3d13165a00d4b87b0ee3dab49236, type: 3}
+    widgetVariations:
+    - category: 
+      widgetName: TooltipTrigger
+      widgetIcon: {fileID: 0}
+      widgetPrefab: {fileID: 605793433359231105, guid: 5492a802049d67d46959ea268dbc449b, type: 3}
+      noCanvasRequired: 0
+    noCanvasRequired: 0
+  - category: Utility
+    widgetName: Utility
+    widgetIcon: {fileID: 0}
+    widgetPrefab: {fileID: 0}
+    widgetVariations:
+    - category: Utility
+      widgetName: Setup Default State
+      widgetIcon: {fileID: 2800000, guid: 0fa7be9b9c7f73d4e858999dd305bc5a, type: 3}
+      widgetPrefab: {fileID: 349067503083571467, guid: 6a5299d58c39e934a810ea74b1150ba3, type: 3}
+      noCanvasRequired: 1
+    noCanvasRequired: 1

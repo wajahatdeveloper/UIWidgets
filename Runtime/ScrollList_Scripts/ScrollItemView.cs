@@ -11,8 +11,42 @@ namespace AetherNexus.UIWidgets
     /// Supports automatic component finding and provides flexible configuration options.
     /// </summary>
     [AddComponentMenu("UI/ScrollItemView")]
-    public class ScrollItemView : MonoBehaviour
+    public class ScrollItemView : MonoBehaviour, IListItemBinder
     {
+        /// <summary>
+        /// Binds stock <see cref="ScrollListItemData"/> / <see cref="string"/> payloads used by the
+        /// packaged item prefab. Typed rows should use <see cref="ScrollItemView{T}"/> instead.
+        /// </summary>
+        void IListItemBinder.BindRaw(object data, int index)
+        {
+            EnsureReferences();
+            switch (data)
+            {
+                case ScrollListItemData item:
+                    Configure(item.Title, item.Subtitle, item.Icon);
+                    break;
+                case string title:
+                    Configure(title);
+                    break;
+                case null:
+                    Configure(string.Empty);
+                    break;
+                default:
+                    throw new InvalidOperationException(
+                        $"[ScrollList] Prefab '{name}' uses ScrollItemView but data type '{data.GetType().Name}' " +
+                        $"is not ScrollListItemData or string. Subclass ScrollItemView<T> and implement Bind, " +
+                        $"or pass ScrollListItemData.");
+            }
+        }
+
+        void IListItemBinder.Unbind()
+        {
+            ClearButtonListeners();
+            Title = string.Empty;
+            Subtitle = string.Empty;
+            Image = null;
+        }
+
         #region Public Fields
         [Header("Default References")]
         public TextMeshProUGUI title;

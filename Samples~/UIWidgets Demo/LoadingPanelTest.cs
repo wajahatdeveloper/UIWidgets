@@ -51,7 +51,10 @@ namespace AetherNexus.UIWidgets
 
         private void OnGUI()
         {
-            float y = UIWidgetsDemoImgui.LoadingY;
+            if (!UIWidgetsDemoImgui.IsSection(UIWidgetsDemoImgui.Section.Modals))
+                return;
+
+            float y = UIWidgetsDemoImgui.ContentY + 320f;
             if (UIWidgetsDemoImgui.Button(ref y, "Load show")) TestShowSimple();
             if (UIWidgetsDemoImgui.Button(ref y, "Load bar")) TestTimedProgress();
             if (UIWidgetsDemoImgui.Button(ref y, "Load hide")) TestHide();

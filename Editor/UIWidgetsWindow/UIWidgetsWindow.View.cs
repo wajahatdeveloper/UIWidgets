@@ -49,6 +49,8 @@ namespace AetherNexus.UIWidgets.Editor
 		private const float TileWidth = 84f;
 		private const float TileHeight = 78f;
 		private const float TileIconSize = 40f;
+		private const float ListRowHeight = 22f;
+		private const float ListIconSize = 16f;
 
 		private VisualElement _paletteRoot;
 		private VisualElement _gridContainer;
@@ -63,10 +65,15 @@ namespace AetherNexus.UIWidgets.Editor
 			public string category;
 			public GameObject prefab;      // set for spawn tiles
 			public System.Type component;  // set for attach-component tiles
+			public System.Func<GameObject> factory; // set for Default UI stock creates
+			public System.Type iconType;  // optional icon override (Default UI)
 			public bool noCanvas;
 
 			public bool IsComponent => component != null;
+			public bool IsDefaultUi => factory != null;
 		}
+
+		private const string DefaultUiCategory = "Default UI";
 
 		// Attach-component tiles, surfaced in the grid alongside widgets. Left-click attaches the
 		// component to the selection (or a new Canvas child). Grouped under their own categories.
@@ -75,6 +82,7 @@ namespace AetherNexus.UIWidgets.Editor
 			("Behaviours", "Safe Area", typeof(SafeArea)),
 			("Behaviours", "UI Default State", typeof(UIDefaultState)),
 			("Behaviours", "Auto UI Refs", typeof(AutoUIRefs)),
+			("Behaviours", "Layout X", typeof(LayoutX)),
 			("Effects", "Gradient", typeof(UIGradient)),
 			("Effects", "Canvas Particles", typeof(UICanvasParticles)),
 			("Effects", "Soft Mask", typeof(UISoftMask)),
@@ -201,9 +209,13 @@ namespace AetherNexus.UIWidgets.Editor
 			var row = new Toolbar();
 			row.style.marginTop = 2;
 			row.style.marginBottom = 2;
+			row.style.flexShrink = 0;
 
+			// Search absorbs width pressure so Icon/List/2D Focus/Select keep full size.
 			var search = new ToolbarSearchField { value = searchQuery ?? string.Empty };
 			search.style.flexGrow = 1;
+			search.style.flexShrink = 1;
+			search.style.minWidth = 40;
 			search.RegisterValueChangedCallback(e =>
 			{
 				searchQuery = e.newValue;
@@ -212,14 +224,18 @@ namespace AetherNexus.UIWidgets.Editor
 			});
 			row.Add(search);
 
+			row.Add(BuildViewModeToggle());
+
 			var focus2D = new ToolbarButton(FocusSelectedUIIn2D)
 			{
 				text = "2D Focus",
 				tooltip = "Enable Scene View 2D mode and frame the selected UI object"
 			};
+			PreventToolbarShrink(focus2D);
 			row.Add(focus2D);
 
 			var select = new ToolbarMenu { text = "Select", tooltip = "Bulk-select existing objects in the scene" };
+			PreventToolbarShrink(select);
 			select.menu.AppendAction("All Button + Text", _ => SelectButtonsWith<Text>(false));
 			select.menu.AppendAction("All Button + Text (under selection)", _ => SelectButtonsWith<Text>(true));
 			select.menu.AppendAction("All Button + TMP", _ => SelectButtonsWith<TextMeshProUGUI>(false));
@@ -227,6 +243,76 @@ namespace AetherNexus.UIWidgets.Editor
 			row.Add(select);
 
 			return row;
+		}
+
+		private static void PreventToolbarShrink(VisualElement element)
+		{
+			element.style.flexGrow = 0;
+			element.style.flexShrink = 0;
+		}
+
+		private VisualElement BuildViewModeToggle()
+		{
+			var group = new VisualElement();
+			group.style.flexDirection = FlexDirection.Row;
+			PreventToolbarShrink(group);
+
+			ToolbarToggle iconToggle = null;
+			ToolbarToggle listToggle = null;
+
+			iconToggle = new ToolbarToggle
+			{
+				text = "Icon",
+				tooltip = "Icon View",
+				value = viewMode == PaletteViewMode.Icon
+			};
+			iconToggle.style.fontSize = 10;
+			PreventToolbarShrink(iconToggle);
+			iconToggle.RegisterValueChangedCallback(e =>
+			{
+				if (!e.newValue)
+				{
+					// Keep at least one mode selected.
+					if (viewMode == PaletteViewMode.Icon)
+						iconToggle.SetValueWithoutNotify(true);
+					return;
+				}
+				listToggle.SetValueWithoutNotify(false);
+				SetViewMode(PaletteViewMode.Icon);
+			});
+
+			listToggle = new ToolbarToggle
+			{
+				text = "List",
+				tooltip = "List View",
+				value = viewMode == PaletteViewMode.List
+			};
+			listToggle.style.fontSize = 10;
+			PreventToolbarShrink(listToggle);
+			listToggle.RegisterValueChangedCallback(e =>
+			{
+				if (!e.newValue)
+				{
+					if (viewMode == PaletteViewMode.List)
+						listToggle.SetValueWithoutNotify(true);
+					return;
+				}
+				iconToggle.SetValueWithoutNotify(false);
+				SetViewMode(PaletteViewMode.List);
+			});
+
+			group.Add(iconToggle);
+			group.Add(listToggle);
+			return group;
+		}
+
+		private void SetViewMode(PaletteViewMode mode)
+		{
+			if (viewMode == mode) return;
+			viewMode = mode;
+			EditorPrefs.SetInt(PrefKey_ViewMode, (int)viewMode);
+			RebuildGrid();
+			RefreshRecents();
 		}
 
 		#endregion
@@ -241,17 +327,59 @@ namespace AetherNexus.UIWidgets.Editor
 			foreach (var w in uiWidgetsAsset.widgets)
 			{
 				string cat = GetCategoryDisplayName(w.category);
-				if (w.widgetPrefab != null && !string.IsNullOrEmpty(w.widgetName))
-					list.Add(new TileInfo { name = w.widgetName, category = cat, prefab = w.widgetPrefab, noCanvas = w.noCanvasRequired });
+				bool hasNamedVariations = false;
+				if (w.widgetVariations != null)
+				{
+					for (int i = 0; i < w.widgetVariations.Count; i++)
+					{
+						if (!string.IsNullOrEmpty(w.widgetVariations[i].widgetName))
+						{
+							hasNamedVariations = true;
+							break;
+						}
+					}
+				}
+
+				// Named leaf with no prefab → disabled tile. Variation-only parents (null prefab
+				// + children) are skipped so "Cards" / "Singletons" don't appear as dead tiles.
+				if (!string.IsNullOrEmpty(w.widgetName) && (w.widgetPrefab != null || !hasNamedVariations))
+				{
+					list.Add(new TileInfo
+					{
+						name = w.widgetName,
+						category = cat,
+						prefab = w.widgetPrefab,
+						noCanvas = w.noCanvasRequired
+					});
+				}
 
 				if (w.widgetVariations != null)
 				{
 					foreach (var v in w.widgetVariations)
 					{
-						if (v.widgetPrefab == null) continue;
-						list.Add(new TileInfo { name = v.widgetName, category = cat, prefab = v.widgetPrefab, noCanvas = v.noCanvasRequired });
+						if (string.IsNullOrEmpty(v.widgetName)) continue;
+						list.Add(new TileInfo
+						{
+							name = v.widgetName,
+							category = cat,
+							prefab = v.widgetPrefab,
+							noCanvas = v.noCanvasRequired
+						});
 					}
 				}
+			}
+
+			// Stock Unity UI (hardcoded) — before Behaviours/Effects so designers find defaults early.
+			foreach (var d in DefaultUiFactory.Tiles)
+			{
+				list.Add(new TileInfo
+				{
+					name = d.name,
+					category = DefaultUiCategory,
+					factory = d.factory,
+					iconType = d.iconType,
+					noCanvas = d.noCanvas
+				});
 			}
 
 			// Attach-component tiles appear after the widget categories.
@@ -313,6 +441,7 @@ namespace AetherNexus.UIWidgets.Editor
 			_gridContainer.Clear();
 
 			bool searching = !string.IsNullOrEmpty(searchQuery);
+			bool listMode = viewMode == PaletteViewMode.List;
 
 			var order = new List<string>();
 			var byCat = new Dictionary<string, List<TileInfo>>();
@@ -340,14 +469,22 @@ namespace AetherNexus.UIWidgets.Editor
 					foldout.RegisterValueChangedCallback(e => SetFoldout(cat, e.newValue));
 
 				var wrap = new VisualElement();
-				wrap.style.flexDirection = FlexDirection.Row;
-				wrap.style.flexWrap = Wrap.Wrap;
+				if (listMode)
+				{
+					wrap.style.flexDirection = FlexDirection.Column;
+					wrap.style.width = Length.Percent(100);
+				}
+				else
+				{
+					wrap.style.flexDirection = FlexDirection.Row;
+					wrap.style.flexWrap = Wrap.Wrap;
+				}
 
 				// Skip tile VisualElements for collapsed categories; build on first expand.
 				if (expanded)
 				{
 					foreach (var t in visible)
-						wrap.Add(BuildTile(t));
+						wrap.Add(BuildPaletteItem(t));
 				}
 				else
 				{
@@ -356,7 +493,7 @@ namespace AetherNexus.UIWidgets.Editor
 						if (!e.newValue) return;
 						foldout.UnregisterValueChangedCallback(OnExpand);
 						foreach (var t in visible)
-							wrap.Add(BuildTile(t));
+							wrap.Add(BuildPaletteItem(t));
 					}
 					foldout.RegisterValueChangedCallback(OnExpand);
 				}
@@ -366,16 +503,27 @@ namespace AetherNexus.UIWidgets.Editor
 			}
 		}
 
+		private VisualElement BuildPaletteItem(TileInfo info)
+		{
+			return viewMode == PaletteViewMode.List ? BuildListRow(info) : BuildTile(info);
+		}
+
 		private VisualElement BuildTile(TileInfo info)
 		{
 			bool isComponent = info.IsComponent;
+			bool isDefaultUi = info.IsDefaultUi;
+			bool missingPrefab = !isComponent && !isDefaultUi && info.prefab == null;
 
 			var tile = new VisualElement
 			{
-				name = isComponent ? "component-tile" : "widget-tile",
-				tooltip = isComponent
-					? info.name + "\nAdd component to selection (or a new Canvas child)"
-					: info.name + "\nClick = child · Drag = scene · Right-click = more"
+				name = isComponent ? "component-tile" : isDefaultUi ? "default-ui-tile" : "widget-tile",
+				tooltip = missingPrefab
+					? info.name + "\nNo prefab assigned in UIWidgetsAsset — fix the catalog entry."
+					: isComponent
+						? info.name + "\nAdd component to selection (or a new Canvas child)"
+						: isDefaultUi
+							? info.name + "\nStock Unity UI · Click = child · Right-click = more"
+							: info.name + "\nClick = child · Drag = scene · Right-click = more"
 			};
 			tile.style.width = TileWidth;
 			tile.style.height = TileHeight;
@@ -385,21 +533,29 @@ namespace AetherNexus.UIWidgets.Editor
 			tile.style.paddingBottom = 4;
 			tile.style.alignItems = Align.Center;
 			tile.style.justifyContent = Justify.Center;
+			tile.style.opacity = missingPrefab ? 0.45f : 1f;
 			SetBorderRadius(tile, 4);
 			// Component tiles get a warm tint so "attach" reads differently from "spawn".
-			var idle = isComponent ? new Color(1f, 0.78f, 0.35f, 0.06f) : new Color(1f, 1f, 1f, 0.04f);
-			var hover = isComponent ? new Color(1f, 0.78f, 0.35f, 0.16f) : new Color(1f, 1f, 1f, 0.10f);
+			var idle = missingPrefab
+				? new Color(1f, 0.3f, 0.3f, 0.08f)
+				: isComponent ? new Color(1f, 0.78f, 0.35f, 0.06f) : new Color(1f, 1f, 1f, 0.04f);
+			var hover = missingPrefab
+				? idle
+				: isComponent ? new Color(1f, 0.78f, 0.35f, 0.16f) : new Color(1f, 1f, 1f, 0.10f);
 			tile.style.backgroundColor = idle;
-			tile.RegisterCallback<MouseEnterEvent>(_ =>
+			if (!missingPrefab)
 			{
-				tile.style.backgroundColor = hover;
-				UIWidgetsHierarchyHighlight.Set(ResolveHighlightTarget(info.noCanvas));
-			});
-			tile.RegisterCallback<MouseLeaveEvent>(_ =>
-			{
-				tile.style.backgroundColor = idle;
-				UIWidgetsHierarchyHighlight.Clear();
-			});
+				tile.RegisterCallback<MouseEnterEvent>(_ =>
+				{
+					tile.style.backgroundColor = hover;
+					UIWidgetsHierarchyHighlight.Set(ResolveHighlightTarget(info.noCanvas));
+				});
+				tile.RegisterCallback<MouseLeaveEvent>(_ =>
+				{
+					tile.style.backgroundColor = idle;
+					UIWidgetsHierarchyHighlight.Clear();
+				});
+			}
 
 			var img = new UIEImage { scaleMode = ScaleMode.ScaleToFit };
 			img.style.width = TileIconSize;
@@ -416,6 +572,18 @@ namespace AetherNexus.UIWidgets.Editor
 			label.style.marginTop = 2;
 			tile.Add(label);
 
+			if (missingPrefab)
+			{
+				var badge = new Label("!") { tooltip = "Missing prefab" };
+				badge.style.position = Position.Absolute;
+				badge.style.top = 1;
+				badge.style.right = 4;
+				badge.style.fontSize = 12;
+				badge.style.color = new Color(1f, 0.4f, 0.4f, 1f);
+				tile.Add(badge);
+				return tile;
+			}
+
 			if (isComponent)
 			{
 				// Corner badge marks the tile as "attach component", not "spawn prefab".
@@ -427,12 +595,121 @@ namespace AetherNexus.UIWidgets.Editor
 				badge.style.color = new Color(1f, 0.78f, 0.35f, 1f);
 				tile.Add(badge);
 			}
+			else if (isDefaultUi)
+			{
+				var badge = new Label("U") { tooltip = "Stock Unity UI (not a curated prefab)" };
+				badge.style.position = Position.Absolute;
+				badge.style.top = 1;
+				badge.style.right = 4;
+				badge.style.fontSize = 11;
+				badge.style.color = new Color(0.55f, 0.75f, 1f, 1f);
+				tile.Add(badge);
+			}
 
 			if (isComponent)
 				WireComponentInteractions(tile, info);
+			else if (isDefaultUi)
+				WireDefaultUiInteractions(tile, info);
 			else
 				WireSpawnInteractions(tile, info);
 			return tile;
+		}
+
+		private VisualElement BuildListRow(TileInfo info)
+		{
+			bool isComponent = info.IsComponent;
+			bool isDefaultUi = info.IsDefaultUi;
+			bool missingPrefab = !isComponent && !isDefaultUi && info.prefab == null;
+
+			var row = new VisualElement
+			{
+				name = isComponent ? "component-row" : isDefaultUi ? "default-ui-row" : "widget-row",
+				tooltip = missingPrefab
+					? info.name + "\nNo prefab assigned in UIWidgetsAsset — fix the catalog entry."
+					: isComponent
+						? info.name + "\nAdd component to selection (or a new Canvas child)"
+						: isDefaultUi
+							? info.name + "\nStock Unity UI · Click = child · Right-click = more"
+							: info.name + "\nClick = child · Drag = scene · Right-click = more"
+			};
+			row.style.flexDirection = FlexDirection.Row;
+			row.style.alignItems = Align.Center;
+			row.style.height = ListRowHeight;
+			row.style.width = Length.Percent(100);
+			row.style.marginBottom = 1;
+			row.style.paddingLeft = 4;
+			row.style.paddingRight = 4;
+			row.style.opacity = missingPrefab ? 0.45f : 1f;
+			SetBorderRadius(row, 2);
+
+			var idle = missingPrefab
+				? new Color(1f, 0.3f, 0.3f, 0.08f)
+				: isComponent ? new Color(1f, 0.78f, 0.35f, 0.06f) : new Color(1f, 1f, 1f, 0.04f);
+			var hover = missingPrefab
+				? idle
+				: isComponent ? new Color(1f, 0.78f, 0.35f, 0.16f) : new Color(1f, 1f, 1f, 0.10f);
+			row.style.backgroundColor = idle;
+			if (!missingPrefab)
+			{
+				row.RegisterCallback<MouseEnterEvent>(_ =>
+				{
+					row.style.backgroundColor = hover;
+					UIWidgetsHierarchyHighlight.Set(ResolveHighlightTarget(info.noCanvas));
+				});
+				row.RegisterCallback<MouseLeaveEvent>(_ =>
+				{
+					row.style.backgroundColor = idle;
+					UIWidgetsHierarchyHighlight.Clear();
+				});
+			}
+
+			var img = new UIEImage { scaleMode = ScaleMode.ScaleToFit };
+			img.style.width = ListIconSize;
+			img.style.height = ListIconSize;
+			img.style.flexShrink = 0;
+			img.style.marginRight = 6;
+			AssignIcon(img, info);
+			row.Add(img);
+
+			var label = new Label(info.name);
+			label.style.fontSize = 11;
+			label.style.flexGrow = 1;
+			label.style.flexShrink = 1;
+			label.style.overflow = Overflow.Hidden;
+			row.Add(label);
+
+			if (missingPrefab)
+			{
+				var badge = new Label("missing prefab");
+				badge.style.fontSize = 9;
+				badge.style.color = new Color(1f, 0.45f, 0.45f, 1f);
+				badge.style.flexShrink = 0;
+				row.Add(badge);
+				return row;
+			}
+
+			if (isComponent)
+			{
+				var badge = new Label("⊕") { tooltip = "Adds a component to the selection" };
+				badge.style.fontSize = 12;
+				badge.style.color = new Color(1f, 0.78f, 0.35f, 1f);
+				badge.style.flexShrink = 0;
+				row.Add(badge);
+				WireComponentInteractions(row, info);
+			}
+			else if (isDefaultUi)
+			{
+				var badge = new Label("U") { tooltip = "Stock Unity UI (not a curated prefab)" };
+				badge.style.fontSize = 11;
+				badge.style.color = new Color(0.55f, 0.75f, 1f, 1f);
+				badge.style.flexShrink = 0;
+				row.Add(badge);
+				WireDefaultUiInteractions(row, info);
+			}
+			else
+				WireSpawnInteractions(row, info);
+
+			return row;
 		}
 
 		// One coherent icon set: each widget resolves to a Unity component's own icon (via
@@ -443,8 +720,6 @@ namespace AetherNexus.UIWidgets.Editor
 			{ "Panel", typeof(UnityEngine.UI.Image) },
 			{ "Canvas", typeof(Canvas) },
 			{ "ButtonX", typeof(UnityEngine.UI.Button) },
-			{ "ButtonTMP", typeof(UnityEngine.UI.Button) },
-			{ "DropDown", typeof(UnityEngine.UI.Dropdown) },
 			{ "Image", typeof(UnityEngine.UI.Image) },
 			{ "RawImage", typeof(UnityEngine.UI.RawImage) },
 			{ "InputField", typeof(UnityEngine.UI.InputField) },
@@ -461,7 +736,7 @@ namespace AetherNexus.UIWidgets.Editor
 			{ "TooltipTrigger", typeof(UnityEngine.UI.Text) },
 			{ "Setup Default State", typeof(GameObject) },
 			{ "EventSystem", typeof(UnityEngine.EventSystems.EventSystem) },
-			{ "ScollableList", typeof(UnityEngine.UI.ScrollRect) },
+			{ "ScrollList", typeof(UnityEngine.UI.ScrollRect) },
 			{ "ScrollList_Horizontal", typeof(UnityEngine.UI.ScrollRect) },
 			{ "ScrollList_Vertical", typeof(UnityEngine.UI.ScrollRect) },
 			{ "Tabs", typeof(UnityEngine.UI.Toggle) },
@@ -470,12 +745,15 @@ namespace AetherNexus.UIWidgets.Editor
 			{ "CardPopup", typeof(UnityEngine.UI.Image) },
 			{ "CardStack", typeof(UnityEngine.UI.Image) },
 			{ "Dialog Screen", typeof(Canvas) },
-			{ "Fader Sceen", typeof(Canvas) },
+			{ "Fader Screen", typeof(Canvas) },
 			{ "Input Dialog Screen", typeof(Canvas) },
 			{ "Loading Screen", typeof(Canvas) },
 			{ "Wait Screen", typeof(Canvas) },
 			{ "Line Message Screen", typeof(Canvas) },
 			{ "Toast Message Canvas", typeof(Canvas) },
+			{ "ModalService", typeof(GameObject) },
+			{ "ContextMenu", typeof(GameObject) },
+			{ "PopupText", typeof(GameObject) },
 		};
 
 		private void AssignIcon(UIEImage img, TileInfo info)
@@ -487,7 +765,13 @@ namespace AetherNexus.UIWidgets.Editor
 		{
 			// Component tiles: the component type's own icon (custom scripts get the C# script icon).
 			if (info.IsComponent)
-				return TypeIcon(info.component);
+				return TypeIcon(info.component) ?? FallbackGameObjectIcon();
+
+			if (info.iconType != null)
+			{
+				var typed = TypeIcon(info.iconType);
+				if (typed != null) return typed;
+			}
 
 			if (!string.IsNullOrEmpty(info.name) && WidgetIconTypes.TryGetValue(info.name, out var type))
 			{
@@ -497,7 +781,7 @@ namespace AetherNexus.UIWidgets.Editor
 
 			// Unmapped widget: the prefab's own mini thumbnail, else the generic GameObject icon.
 			Texture mini = info.prefab != null ? AssetPreview.GetMiniThumbnail(info.prefab) : null;
-			return mini != null ? mini : TypeIcon(typeof(GameObject));
+			return mini != null ? mini : FallbackGameObjectIcon();
 		}
 
 		private static Texture TypeIcon(System.Type type)
@@ -505,6 +789,14 @@ namespace AetherNexus.UIWidgets.Editor
 			if (type == null) return null;
 			var content = EditorGUIUtility.ObjectContent(null, type);
 			return content != null ? content.image : null;
+		}
+
+		private static Texture FallbackGameObjectIcon()
+		{
+			var tex = TypeIcon(typeof(GameObject));
+			if (tex != null) return tex;
+			return EditorGUIUtility.IconContent("GameObject Icon").image as Texture
+				?? EditorGUIUtility.IconContent("d_GameObject Icon").image as Texture;
 		}
 
 		private void WireComponentInteractions(VisualElement tile, TileInfo info)
@@ -525,8 +817,44 @@ namespace AetherNexus.UIWidgets.Editor
 				})));
 		}
 
+		private void WireDefaultUiInteractions(VisualElement tile, TileInfo info)
+		{
+			tile.RegisterCallback<PointerUpEvent>(e =>
+			{
+				if (e.button != 0) return;
+				UIWidgetsHierarchyHighlight.Clear();
+				CreateAsChild(info.factory, info.noCanvas, info.name);
+				PushRecent(info.name);
+			});
+
+			tile.AddManipulator(new ContextualMenuManipulator(evt =>
+			{
+				evt.menu.AppendAction("Add as Child", _ =>
+				{
+					UIWidgetsHierarchyHighlight.Clear();
+					CreateAsChild(info.factory, info.noCanvas, info.name);
+					PushRecent(info.name);
+				});
+				evt.menu.AppendAction("Add as Sibling", _ =>
+				{
+					UIWidgetsHierarchyHighlight.Clear();
+					CreateAsSibling(info.factory, info.noCanvas, info.name);
+					PushRecent(info.name);
+				});
+				evt.menu.AppendAction("Add as Parent", _ =>
+				{
+					UIWidgetsHierarchyHighlight.Clear();
+					CreateAsParent(info.factory, info.noCanvas, info.name);
+					PushRecent(info.name);
+				});
+			}));
+		}
+
 		private void WireSpawnInteractions(VisualElement tile, TileInfo info)
 		{
+			if (info.prefab == null)
+				return;
+
 			Vector2 down = Vector2.zero;
 			bool armed = false;
 
@@ -649,6 +977,20 @@ namespace AetherNexus.UIWidgets.Editor
 			if (_recentsStrip == null || _recentsSection == null) return;
 			_recentsStrip.Clear();
 
+			bool listMode = viewMode == PaletteViewMode.List;
+			if (listMode)
+			{
+				_recentsStrip.style.flexDirection = FlexDirection.Column;
+				_recentsStrip.style.flexWrap = Wrap.NoWrap;
+				_recentsStrip.style.width = Length.Percent(100);
+			}
+			else
+			{
+				_recentsStrip.style.flexDirection = FlexDirection.Row;
+				_recentsStrip.style.flexWrap = Wrap.Wrap;
+				_recentsStrip.style.width = StyleKeyword.Null;
+			}
+
 			var byName = new Dictionary<string, TileInfo>();
 			foreach (var t in GetTileInfos())
 				byName[t.name] = t;
@@ -658,7 +1000,7 @@ namespace AetherNexus.UIWidgets.Editor
 			{
 				if (byName.TryGetValue(n, out var info))
 				{
-					_recentsStrip.Add(BuildTile(info));
+					_recentsStrip.Add(BuildPaletteItem(info));
 					shown++;
 				}
 			}

@@ -45,7 +45,34 @@ namespace AetherNexus.UIWidgets.Editor
 				parent = ResolveCanvasParent();
 				if (parent == null) return;
 			}
+			EnsureEventSystemExists();
 			FinalizeCreated(InstantiatePrefabOrClone(prefab, parent), prefab);
+		}
+
+		/// <summary>Stock Default UI create (no prefab). Same parenting rules as prefab create.</summary>
+		internal void CreateAsChild(System.Func<GameObject> factory, bool noCanvasRequired, string displayName)
+		{
+			if (factory == null) return;
+			Transform parent = Selection.activeTransform;
+			if (parent == null && !noCanvasRequired)
+			{
+				parent = ResolveCanvasParent();
+				if (parent == null) return;
+			}
+			EnsureEventSystemExists();
+			GameObject itemObject = factory();
+			if (itemObject == null) return;
+			Undo.RegisterCreatedObjectUndo(itemObject, "Create " + displayName);
+			if (parent != null)
+				Undo.SetTransformParent(itemObject.transform, parent, "Parent " + displayName);
+			itemObject.name = itemObject.name.RemoveCloneSuffix();
+			if (useAutoNaming && uiWidgetsAsset != null)
+			{
+				itemObject.name = displayName + uiWidgetsAsset.nameDelimiter;
+				RenameGameObjectModal.Open(itemObject, itemObject.name);
+			}
+			if (autoSelectNewItems)
+				Selection.SetActiveObjectWithContext(itemObject, itemObject);
 		}
 
 		/// <summary>Advanced action. Creates the widget beside the selection (same parent).</summary>
@@ -62,7 +89,37 @@ namespace AetherNexus.UIWidgets.Editor
 				}
 				parent = Selection.activeTransform.parent;
 			}
+			EnsureEventSystemExists();
 			FinalizeCreated(InstantiatePrefabOrClone(prefab, parent), prefab);
+		}
+
+		internal void CreateAsSibling(System.Func<GameObject> factory, bool noCanvasRequired, string displayName)
+		{
+			if (factory == null) return;
+			Transform parent = null;
+			if (!noCanvasRequired)
+			{
+				if (Selection.activeTransform == null)
+				{
+					DebugX.Logger(LogChannels.Editor).Error("[UI:ERROR:Editor] UIWidgets: select a UI object to add a sibling.");
+					return;
+				}
+				parent = Selection.activeTransform.parent;
+			}
+			EnsureEventSystemExists();
+			GameObject itemObject = factory();
+			if (itemObject == null) return;
+			Undo.RegisterCreatedObjectUndo(itemObject, "Create " + displayName);
+			if (parent != null)
+				Undo.SetTransformParent(itemObject.transform, parent, "Parent " + displayName);
+			itemObject.name = itemObject.name.RemoveCloneSuffix();
+			if (useAutoNaming && uiWidgetsAsset != null)
+			{
+				itemObject.name = displayName + uiWidgetsAsset.nameDelimiter;
+				RenameGameObjectModal.Open(itemObject, itemObject.name);
+			}
+			if (autoSelectNewItems)
+				Selection.SetActiveObjectWithContext(itemObject, itemObject);
 		}
 
 		/// <summary>Advanced action. Wraps the selection: the new widget takes the selection's slot
@@ -81,6 +138,7 @@ namespace AetherNexus.UIWidgets.Editor
 			Transform oldParent = sel.parent;
 			int siblingIndex = sel.GetSiblingIndex();
 
+			EnsureEventSystemExists();
 			GameObject itemObject = InstantiatePrefabOrClone(prefab, oldParent);
 			if (itemObject == null)
 			{
@@ -96,6 +154,38 @@ namespace AetherNexus.UIWidgets.Editor
 			if (useAutoNaming && uiWidgetsAsset != null)
 			{
 				itemObject.name = prefab.name + uiWidgetsAsset.nameDelimiter;
+				RenameGameObjectModal.Open(itemObject, itemObject.name);
+			}
+			if (autoSelectNewItems)
+				Selection.SetActiveObjectWithContext(itemObject, itemObject);
+		}
+
+		internal void CreateAsParent(System.Func<GameObject> factory, bool noCanvasRequired, string displayName)
+		{
+			if (factory == null) return;
+			Transform sel = Selection.activeTransform;
+			if (sel == null || sel.GetComponent<RectTransform>() == null)
+			{
+				CreateAsChild(factory, noCanvasRequired, displayName);
+				return;
+			}
+
+			Transform oldParent = sel.parent;
+			int siblingIndex = sel.GetSiblingIndex();
+
+			EnsureEventSystemExists();
+			GameObject itemObject = factory();
+			if (itemObject == null) return;
+
+			Undo.RegisterCreatedObjectUndo(itemObject, "Create " + displayName);
+			if (oldParent != null)
+				Undo.SetTransformParent(itemObject.transform, oldParent, "Parent " + displayName);
+			itemObject.transform.SetSiblingIndex(siblingIndex);
+			Undo.SetTransformParent(sel, itemObject.transform, "Wrap under new parent");
+
+			if (useAutoNaming && uiWidgetsAsset != null)
+			{
+				itemObject.name = displayName + uiWidgetsAsset.nameDelimiter;
 				RenameGameObjectModal.Open(itemObject, itemObject.name);
 			}
 			if (autoSelectNewItems)
@@ -353,13 +443,27 @@ namespace AetherNexus.UIWidgets.Editor
 			if (parent == null)
 				parent = Selection.activeTransform;
 
-			GameObject canvasPrefab = uiWidgetsAsset.widgets.First(x => x.widgetName == "Canvas").widgetPrefab;
+			GameObject canvasGO = new GameObject("Canvas");
+			canvasGO.layer = LayerMask.NameToLayer("UI");
+			var canvas = canvasGO.AddComponent<Canvas>();
+			canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+			canvasGO.AddComponent<CanvasScaler>();
+			canvasGO.AddComponent<GraphicRaycaster>();
+			if (parent != null)
+				canvasGO.transform.SetParent(parent, false);
+			Undo.RegisterCreatedObjectUndo(canvasGO, "Create new Canvas");
+			return canvasGO;
+		}
 
-			GameObject newCanvas = isInstantiatingPrefab
-				? PrefabUtility.InstantiatePrefab(canvasPrefab, parent) as GameObject
-				: Instantiate(canvasPrefab, parent);
-			Undo.RegisterCreatedObjectUndo(newCanvas, "Create new Canvas");
-			return newCanvas;
+		private static void EnsureEventSystemExists()
+		{
+			if (FindFirstObjectByType<UnityEngine.EventSystems.EventSystem>() != null)
+				return;
+
+			var es = new GameObject("EventSystem");
+			es.AddComponent<UnityEngine.EventSystems.EventSystem>();
+			es.AddComponent<UnityEngine.EventSystems.StandaloneInputModule>();
+			Undo.RegisterCreatedObjectUndo(es, "Create new EventSystem");
 		}
 
 		private static T[] FindObjectsOfTypeInChildrenRecursive<T>(Transform root, bool includeInactive = true)

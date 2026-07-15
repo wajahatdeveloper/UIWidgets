@@ -85,7 +85,10 @@ namespace AetherNexus.UIWidgets
 
         private void OnGUI()
         {
-            float y = UIWidgetsDemoImgui.InputY;
+            if (!UIWidgetsDemoImgui.IsSection(UIWidgetsDemoImgui.Section.Modals))
+                return;
+
+            float y = UIWidgetsDemoImgui.ContentY + 90f;
             if (UIWidgetsDemoImgui.Button(ref y, "Input")) TestInputDialog();
             if (UIWidgetsDemoImgui.Button(ref y, "Validate")) TestInputDialogWithValidation();
             if (UIWidgetsDemoImgui.Button(ref y, "Shortcuts")) TestKeyboardShortcuts();

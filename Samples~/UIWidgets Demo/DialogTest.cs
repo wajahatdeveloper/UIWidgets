@@ -71,7 +71,10 @@ namespace AetherNexus.UIWidgets
 
         private void OnGUI()
         {
-            float y = UIWidgetsDemoImgui.DialogY;
+            if (!UIWidgetsDemoImgui.IsSection(UIWidgetsDemoImgui.Section.Modals))
+                return;
+
+            float y = UIWidgetsDemoImgui.ContentY;
             if (UIWidgetsDemoImgui.Button(ref y, "Dlg Ok")) TestOk();
             if (UIWidgetsDemoImgui.Button(ref y, "Dlg YesNo")) TestYesNo();
             if (UIWidgetsDemoImgui.Button(ref y, "Dlg OkCancel")) TestOkCancel();

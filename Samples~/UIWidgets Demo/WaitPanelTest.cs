@@ -79,7 +79,10 @@ namespace AetherNexus.UIWidgets
 
         private void OnGUI()
         {
-            float y = UIWidgetsDemoImgui.WaitY;
+            if (!UIWidgetsDemoImgui.IsSection(UIWidgetsDemoImgui.Section.Modals))
+                return;
+
+            float y = UIWidgetsDemoImgui.ContentY + 390f;
             if (UIWidgetsDemoImgui.Button(ref y, "Wait show")) TestShow();
             if (UIWidgetsDemoImgui.Button(ref y, "Wait hide")) TestHide();
             if (UIWidgetsDemoImgui.Button(ref y, "Wait +")) TestShowCounted();

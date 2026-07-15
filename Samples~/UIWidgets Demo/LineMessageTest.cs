@@ -62,7 +62,10 @@ namespace AetherNexus.UIWidgets
 
         private void OnGUI()
         {
-            float y = UIWidgetsDemoImgui.LineY;
+            if (!UIWidgetsDemoImgui.IsSection(UIWidgetsDemoImgui.Section.Modals))
+                return;
+
+            float y = UIWidgetsDemoImgui.ContentY + 250f;
             if (UIWidgetsDemoImgui.Button(ref y, "Line+Title")) TestWithTitle();
             if (UIWidgetsDemoImgui.Button(ref y, "Line only")) TestMessageOnly();
             if (UIWidgetsDemoImgui.Button(ref y, "Line burst")) TestBurst();

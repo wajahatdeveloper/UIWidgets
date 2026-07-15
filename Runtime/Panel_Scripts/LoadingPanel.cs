@@ -75,6 +75,12 @@ namespace AetherNexus.UIWidgets
 
         public void Show(string text = "Loading..", bool showLoadingBar = false)
         {
+            if (loadingPanel == null)
+            {
+                DebugX.Logger(LogChannels.UI).Error("[UI:ERROR:Panel] LoadingPanel.loadingPanel is not assigned; cannot show.");
+                return;
+            }
+
             if (infoText != null)
             {
                 infoText.text = text;
@@ -83,10 +89,7 @@ namespace AetherNexus.UIWidgets
             {
                 loadingBar.SetActive(showLoadingBar);
             }
-            if (loadingPanel != null)
-            {
-                loadingPanel.SetActive(true);
-            }
+            loadingPanel.SetActive(true);
 
             DebugX.Logger(LogChannels.UI).Info("[UI:INFO:Panel] LoadingPanel Shown {SceneName} id:{Counter}", SceneManager.GetActiveScene().name, _counter);
 

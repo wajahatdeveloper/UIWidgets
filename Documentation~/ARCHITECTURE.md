@@ -12,7 +12,7 @@ General-purpose Unity UGUI widget library. Depends only on `com.aethernexus.foun
 | `UIWidgets.Editor` | `Editor/` | FoundationPlatform.Runtime/Editor, UIWidgets.Runtime | ships |
 | `UIWidgets.GameEngineCoreIntegration.Editor` | `Editor/Integration/GameEngineCore/` | UIWidgets.Editor, GameEngineCore.Editor | **optional** — compiles only when scripting define `HOMAM_GEC` is present |
 
-**Namespaces:** `AetherNexus.UIWidgets` (runtime) and `AetherNexus.UIWidgets.Editor` (editor). Vendored deps were internalized (EasyLayout → `LayoutX`, Nementic scene picker → `ScenePicker`).
+**Namespaces:** `AetherNexus.UIWidgets` (runtime) and `AetherNexus.UIWidgets.Editor` (editor). First-party layout (`LayoutX`) and scene picking (`ScenePicker`) ship in this package.
 
 ### Optional GameEngineCore integration
 
@@ -69,20 +69,23 @@ Editor: `ButtonXEditor`, `UpgradeToButtonX` (converts stock Buttons).
 
 ---
 
-## ScrollableList
+## ScrollList
 
-`ScrollableList` (`ScrollList_Scripts/ScrollableList.cs`) — virtualized, pooled list.
+`ScrollList` (`ScrollList_Scripts/ScrollList.cs`) — virtualized, pooled list.
 
 ```csharp
-SetDataSource<T>(IEnumerable<T> source, Func<T,(title,subtitle,sprite)> binder)
-SetDataSource<T>(ObservableList<T> source, binder)   // reactive auto-sync
+// Stock item prefab (ScrollItemView): bind ScrollListItemData or string
+scrollList.SetDataSource(items); // IEnumerable<ScrollListItemData>
+scrollList.SetDataSource(observableItems); // ObservableList<T> — reactive auto-sync
+
+// Domain models: subclass ScrollItemView<T> on the item prefab and implement Bind/Unbind
 ```
 
-- Items implementing `IBindableListItem<T>.Bind(data, index)` override the default binder
-- **Virtualization:** only visible rows + `virtualizationBuffer` instantiated; recalculated on scroll; `itemHeight`/`itemWidth` auto-measured if 0
+- Item prefab must expose `IListItemBinder` — stock `ScrollItemView` handles `ScrollListItemData` / `string`; typed rows use `ScrollItemView<T>`
+- **Virtualization:** enable on the component (`useVirtualization`) and pass `useVirtualization: true` to `SetDataSource`; only visible rows + buffer instantiated
 - **Pooling:** `Queue<GameObject>` recycled on filter/scroll
-- **Ops:** `AddItem`, `RemoveItem`, `RemoveItemAt`, `ClearAllItems`, `GetItemAt`, `FilterItems(text, inTitle, inSubtitle)`, `SortItems(comparison)`, `ScrollToItem(index, smooth)`
-- **Events:** `OnItemSelected`, `OnListRefreshed`, `OnItemAdded`, `OnItemRemoved`
+- **Ops:** `RemoveItem`, `RemoveItemAt`, `ClearAllItems`, `GetItemAt`, `FilterItems`, `SortItems`, `ScrollToItem`
+- **Events:** `OnItemBound`, `OnItemUnbound`, `OnListRefreshed`
 
 ---
 
@@ -90,11 +93,13 @@ SetDataSource<T>(ObservableList<T> source, binder)   // reactive auto-sync
 
 | Widget | File | Notes |
 |---|---|---|
+| `SpecialDialog` | `Panel_Scripts/SpecialDialog.cs` | subclass of `Dialog`; override `BuildLayout` + show/hide hooks |
 | `ContextMenuWidget` | `Component_Scripts/ContextMenuWidget.cs` | singleton; `Show(ContextMenuRequest)`; viewport-clamped placement (`ScreenPosition` / `TargetRect`, preferred direction), `HideAll()` |
 | `UITabs` | `Scripts/UITabs.cs` | `OnClick_TabButton`, `RebuildTabsFromParents`, `SelectTabByName`; `TabNavigationHelper` for Tab/Shift-Tab nav |
 | Sliders | `Sliders_Scripts/` | `RangeSlider`, `MinMaxSlider`, `BoxSlider`, `RadialSlider`, `Stepper` / `StepperSide` |
 | `CardStack2D` | `CardUI_Scripts/` | card deck; exponential spacing; lerp to target |
-| `Toast` | `Component_Scripts/Toast.cs` | static; `Toast.Create(text).WithDuration().WithColor().AtPosition().Show()`; 8 colors × 9 positions; requires a `ToastUI` instance in the scene |
+| `Toast` | `Component_Scripts/Toast.cs` | static; `Toast.Create(text).WithDuration().WithColor()/WithSeverity().AtPosition().ClickToDismiss().Replace().Show()`; FIFO queue on `ToastUI`; auto text contrast; optional `WithIcon`; requires a `ToastUI` instance in the scene |
+| `PopupText` | `Scripts/PopupText.cs` | floating text spawner; requires item prefab + container |
 | `DefaultFocus`, `AutoClick`, `AlphaButtonClickMask` | `Utility_Scripts/` | focus/click helpers, alpha raycast filter |
 
 ---
@@ -110,7 +115,7 @@ SetDataSource<T>(ObservableList<T> source, binder)   // reactive auto-sync
 
 ## LayoutX (layout engine)
 
-`LayoutX` (`Runtime/Layout/LayoutX.cs`) — in-house single-component layout, replaces the vendored EasyLayout package.
+`LayoutX` (`Runtime/Layout/LayoutX.cs`) — single-component flow/grid layout engine.
 
 - Modes: `Compact` (flow, wraps by element size) and `Grid` (uniform cells), on either axis
 - Axis-relative constraints (`MaxItemsPerLine` / `MaxLines`), line + cross alignment, optional child size driving (`Preferred`), rect-size measuring, child rotation reset
@@ -132,7 +137,7 @@ SetDataSource<T>(ObservableList<T> source, binder)   // reactive auto-sync
 | Tool | Location | Purpose |
 |---|---|---|
 | UI Widgets Window | `Editor/UIWidgetsWindow/` | browse & instantiate widget prefabs into the open scene (partial class: `.cs` / `.UI.cs` / `.View.cs`); backed by `UIWidgetsAssetScriptable` |
-| ScenePicker | `Editor/ScenePicker/` | scene-view object picking + `AnchorTools` (internalized, was Nementic) |
+| ScenePicker | `Editor/ScenePicker/` | scene-view object picking + `AnchorTools` |
 | Settings | `Editor/Settings/` | `UIWidgetsSettings` + `UIWidgetsSettingsProvider` (Project Settings page) |
 | `TextToTMPMigrationTool` | `Editor/` | migrate legacy `Text` → TMP |
 | `UIWidgetsSceneOverlay` | `Editor/` | scene-view overlay |
@@ -143,8 +148,8 @@ SetDataSource<T>(ObservableList<T> source, binder)   // reactive auto-sync
 ## Key patterns
 
 - **Fluent builders** — `DialogBuilder`, `ToastBuilder`, `LoadingPanelBuilder`: chained methods + `.Show()`
-- **Singleton modals** — `Dialog`, `LoadingPanel`, `Toast`, `ContextMenuWidget` on `SingletonBehaviour<T>`
-- **Object pooling** — `ScrollableList` recycles a `Queue<GameObject>` on filter/scroll
+- **Singleton modals** — `Dialog`, `LoadingPanel`, `ContextMenuWidget` on `SingletonBehaviour<T>`; `ToastUI` on `PersistentSingletonBehaviour<T>` (queued toasts)
+- **Object pooling** — `ScrollList` recycles a `Queue<GameObject>` on filter/scroll
 - **Reactive binding** — `ObservableList<T>` subscriptions auto-sync the list on `ItemAdded`/`Removed`/`Cleared`
 - **State machine (ButtonX)** — 5 visual states driven by pointer/keyboard events
 

@@ -4,19 +4,19 @@
 
 Package Manager sample path: `Samples~/UIWidgets Demo`
 
-Play Mode scene with widget singletons plus harness scripts for Dialog, InputDialog, Fader, LineMessage, LoadingPanel, WaitPanel, and ModalService.
+Play Mode gallery with section tabs (Modals / Buttons / Lists / Feedback / Layout). Covers Dialog, InputDialog, Fader, LineMessage, LoadingPanel, WaitPanel, ModalService, ButtonX, ScrollList, UITabs, Toast, ContextMenu, PopupText, LayoutX.
 
 | | |
 |--|--|
 | Scene | `UIWidgetsDemo.unity` |
-| Scripts | `*Test.cs` (OnGUI + hotkeys + Context Menu) |
+| Scripts | `DemoGalleryBootstrap`, `*Test.cs`, `UIWidgetsDemoImgui` |
 
 ## Setup
 
 - **Foundation Platform** installed
 - **Input System:** Project Settings → Player → Active Input Handling = Input System Package **or** Both
-- **uGUI:** present via `com.unity.ugui` (typical URP templates)
-- **Domain Reload:** leave **enabled** (Fast Enter Play Mode is not supported)
+- **uGUI:** present via `com.unity.ugui`
+- **Domain Reload:** leave **enabled**
 - **URP** recommended
 - Do **not** install a second UniTask package
 
@@ -24,9 +24,7 @@ Play Mode scene with widget singletons plus harness scripts for Dialog, InputDia
 
 1. Package Manager → UI Widgets → Samples → **Import** “UI Widgets Demo”
 2. Open `UIWidgetsDemo.unity`
-3. Attach the `*Test` scripts to a harness GameObject (or use the scene’s setup)
-4. For ModalService: assign a `PanelBase` to `ModalServiceTest.demoPanel`
-5. Enter Play Mode
+3. Enter Play Mode — left-rail tabs **M B L F X** (demo objects live in the scene; Bootstrap toggles section visibility)
 
 Note: folders named `Samples~` are hidden in the Project window by design — use Package Manager → Samples to import.
 

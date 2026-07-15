@@ -3,154 +3,234 @@ using UnityEngine;
 
 namespace AetherNexus.UIWidgets
 {
-   public enum ToastColor {
-      Black,
-      Red,
-      Purple,
-      Magenta,
-      Blue,
-      Green,
-      Yellow,
-      Orange
-   }
+	public enum ToastColor
+	{
+		Black,
+		Red,
+		Purple,
+		Magenta,
+		Blue,
+		Green,
+		Yellow,
+		Orange
+	}
 
-   public enum ToastPosition {
-      TopLeft,
-      TopCenter,
-      TopRight,
-      MiddleLeft,
-      MiddleCenter,
-      MiddleRight,
-      BottomLeft,
-      BottomCenter,
-      BottomRight
-   }
+	public enum ToastPosition
+	{
+		TopLeft,
+		TopCenter,
+		TopRight,
+		MiddleLeft,
+		MiddleCenter,
+		MiddleRight,
+		BottomLeft,
+		BottomCenter,
+		BottomRight
+	}
 
-   public static class Toast {
+	/// <summary>Maps common feedback severity to <see cref="ToastColor"/>.</summary>
+	public enum ToastSeverity
+	{
+		Info,
+		Success,
+		Warning,
+		Error
+	}
 
-      /// <summary>
-      /// Resolves the bootstrapped <see cref="ToastUI"/> singleton. The ToastUI prefab is spawned
-      /// by GameBootstrap via the ServiceManifest persistent-singleton list (DontDestroyOnLoad),
-      /// so it is available across scenes without a Resources folder. Returns null (and the
-      /// singleton logs an error) if the prefab was never registered.
-      /// </summary>
-      private static ToastUI Resolve () {
-         return ToastUI.Instance ;
-      }
+	public static class Toast
+	{
+		/// <summary>
+		/// Resolves the scene <see cref="ToastUI"/> singleton (place
+		/// <c>GameObject → UI (Canvas) → Singletons → Toast Message Canvas</c>).
+		/// Missing instance already logs via <see cref="PersistentSingletonBehaviour{T}"/>.
+		/// </summary>
+		private static ToastUI Resolve()
+		{
+			return ToastUI.Instance;
+		}
 
-      // Fluent API Builder
-      public static ToastBuilder Create(string text) {
-         return new ToastBuilder(text);
-      }
+		public static ToastBuilder Create(string text)
+		{
+			return new ToastBuilder(text);
+		}
 
-      // Fluent API Builder Class
-      public class ToastBuilder {
-         private string _text;
-         private float _duration = 2f;
-         private ToastColor _color = ToastColor.Black;
-         private ToastPosition _position = ToastPosition.BottomCenter;
-         private bool _clickToDismiss = false;
-         private Action _onDismiss = null;
+		public class ToastBuilder
+		{
+			private readonly string _text;
+			private float _duration = 2f;
+			private ToastColor _color = ToastColor.Black;
+			private Color? _customColor;
+			private ToastPosition _position = ToastPosition.BottomCenter;
+			private bool _clickToDismiss;
+			private Action _onDismiss;
+			private Sprite _icon;
+			private bool _replace;
 
-         internal ToastBuilder(string text) {
-            _text = text;
-         }
+			internal ToastBuilder(string text)
+			{
+				_text = text;
+			}
 
-         public ToastBuilder WithDuration(float duration) {
-            _duration = duration;
-            return this;
-         }
+			public ToastBuilder WithDuration(float duration)
+			{
+				_duration = duration;
+				return this;
+			}
 
-         public ToastBuilder WithColor(ToastColor color) {
-            _color = color;
-            return this;
-         }
+			public ToastBuilder WithColor(ToastColor color)
+			{
+				_color = color;
+				_customColor = null;
+				return this;
+			}
 
-         public ToastBuilder WithColor(Color color) {
-            // Convert Color to ToastColor if possible, otherwise use custom color
-            return this;
-         }
+			public ToastBuilder WithColor(Color color)
+			{
+				_customColor = color;
+				return this;
+			}
 
-         public ToastBuilder AtPosition(ToastPosition position) {
-            _position = position;
-            return this;
-         }
+			public ToastBuilder WithSeverity(ToastSeverity severity)
+			{
+				_customColor = null;
+				_color = SeverityToColor(severity);
+				return this;
+			}
 
-         public ToastBuilder ClickToDismiss(bool enable = true) {
-            _clickToDismiss = enable;
-            return this;
-         }
+			public ToastBuilder AtPosition(ToastPosition position)
+			{
+				_position = position;
+				return this;
+			}
 
-         public ToastBuilder OnDismiss(Action callback) {
-            _onDismiss = callback;
-            return this;
-         }
+			public ToastBuilder ClickToDismiss(bool enable)
+			{
+				_clickToDismiss = enable;
+				return this;
+			}
 
-         public void Show() {
-            var ui = Resolve();
-            if (ui == null) { return; }
-            ui.Init(_text, _duration, _color, _position, _clickToDismiss, _onDismiss);
-         }
-      }
+			public ToastBuilder OnDismiss(Action callback)
+			{
+				_onDismiss = callback;
+				return this;
+			}
 
-      // Legacy static methods for backward compatibility
-      public static void Show (string text) {
-         var ui = Resolve () ; if (ui == null) { return ; }
-         ui.Init (text, 2F, ToastColor.Black, ToastPosition.BottomCenter) ;
-      }
+			public ToastBuilder WithIcon(Sprite icon)
+			{
+				_icon = icon;
+				return this;
+			}
 
-      public static void Show (string text, float duration) {
-         var ui = Resolve () ; if (ui == null) { return ; }
-         ui.Init (text, duration, ToastColor.Black, ToastPosition.BottomCenter) ;
-      }
+			/// <summary>Clear the queue and replace any showing toast with this one.</summary>
+			public ToastBuilder Replace()
+			{
+				_replace = true;
+				return this;
+			}
 
-      public static void Show (string text, float duration, ToastPosition position) {
-         var ui = Resolve () ; if (ui == null) { return ; }
-         ui.Init (text, duration, ToastColor.Black, position) ;
-      }
+			public void Show()
+			{
+				var ui = Resolve();
+				if (ui == null)
+				{
+					return;
+				}
 
-      public static void Show (string text, ToastColor color) {
-         var ui = Resolve () ; if (ui == null) { return ; }
-         ui.Init (text, 2F, color, ToastPosition.BottomCenter) ;
-      }
+				Color color = _customColor.HasValue ? _customColor.Value : ui.ResolveColor(_color);
+				ui.Enqueue(ToastRequest.Create(
+					_text,
+					_duration,
+					color,
+					_position,
+					_clickToDismiss,
+					_onDismiss,
+					_icon,
+					_replace));
+			}
 
-      public static void Show (string text, ToastColor color, ToastPosition position) {
-         var ui = Resolve () ; if (ui == null) { return ; }
-         ui.Init (text, 2F, color, position) ;
-      }
+			private static ToastColor SeverityToColor(ToastSeverity severity)
+			{
+				switch (severity)
+				{
+					case ToastSeverity.Info: return ToastColor.Blue;
+					case ToastSeverity.Success: return ToastColor.Green;
+					case ToastSeverity.Warning: return ToastColor.Orange;
+					case ToastSeverity.Error: return ToastColor.Red;
+					default:
+						throw new ArgumentOutOfRangeException(nameof(severity), severity, null);
+				}
+			}
+		}
 
-      public static void Show (string text, Color color) {
-         var ui = Resolve () ; if (ui == null) { return ; }
-         ui.Init (text, 2F, color, ToastPosition.BottomCenter) ;
-      }
+		public static void Show(string text)
+		{
+			Create(text).Show();
+		}
 
-      public static void Show (string text, Color color, ToastPosition position) {
-         var ui = Resolve () ; if (ui == null) { return ; }
-         ui.Init (text, 2F, color, position) ;
-      }
+		public static void Show(string text, float duration)
+		{
+			Create(text).WithDuration(duration).Show();
+		}
 
-      public static void Show (string text, float duration, ToastColor color) {
-         var ui = Resolve () ; if (ui == null) { return ; }
-         ui.Init (text, duration, color, ToastPosition.BottomCenter) ;
-      }
+		public static void Show(string text, float duration, ToastPosition position)
+		{
+			Create(text).WithDuration(duration).AtPosition(position).Show();
+		}
 
-      public static void Show (string text, float duration, ToastColor color, ToastPosition position) {
-         var ui = Resolve () ; if (ui == null) { return ; }
-         ui.Init (text, duration, color, position) ;
-      }
+		public static void Show(string text, ToastColor color)
+		{
+			Create(text).WithColor(color).Show();
+		}
 
-      public static void Show (string text, float duration, Color color) {
-         var ui = Resolve () ; if (ui == null) { return ; }
-         ui.Init (text, duration, color, ToastPosition.BottomCenter) ;
-      }
+		public static void Show(string text, ToastColor color, ToastPosition position)
+		{
+			Create(text).WithColor(color).AtPosition(position).Show();
+		}
 
-      public static void Show (string text, float duration, Color color, ToastPosition position) {
-         var ui = Resolve () ; if (ui == null) { return ; }
-         ui.Init (text, duration, color, position) ;
-      }
+		public static void Show(string text, Color color)
+		{
+			Create(text).WithColor(color).Show();
+		}
 
-      public static void Dismiss () {
-         if (ToastUI.HasInstance) { ToastUI.Instance.Dismiss () ; }
-      }
-   }
+		public static void Show(string text, Color color, ToastPosition position)
+		{
+			Create(text).WithColor(color).AtPosition(position).Show();
+		}
+
+		public static void Show(string text, float duration, ToastColor color)
+		{
+			Create(text).WithDuration(duration).WithColor(color).Show();
+		}
+
+		public static void Show(string text, float duration, ToastColor color, ToastPosition position)
+		{
+			Create(text).WithDuration(duration).WithColor(color).AtPosition(position).Show();
+		}
+
+		public static void Show(string text, float duration, Color color)
+		{
+			Create(text).WithDuration(duration).WithColor(color).Show();
+		}
+
+		public static void Show(string text, float duration, Color color, ToastPosition position)
+		{
+			Create(text).WithDuration(duration).WithColor(color).AtPosition(position).Show();
+		}
+
+		public static void Dismiss()
+		{
+			if (ToastUI.HasInstance)
+			{
+				ToastUI.Instance.Dismiss();
+			}
+		}
+
+		public static void DismissAll()
+		{
+			if (ToastUI.HasInstance)
+			{
+				ToastUI.Instance.DismissAll();
+			}
+		}
+	}
 }

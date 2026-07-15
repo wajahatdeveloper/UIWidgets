@@ -14,12 +14,20 @@ namespace AetherNexus.UIWidgets.Editor
 		private const string PrefKey_PreferExistingCanvas = "UIWidgets.PreferExistingCanvas";
 		private const string PrefKey_UseAutoNaming = "UIWidgets.UseAutoNaming";
 		private const string PrefKey_SearchQuery = "UIWidgets.SearchQuery";
+		private const string PrefKey_ViewMode = "UIWidgets.ViewMode";
+
+		private enum PaletteViewMode
+		{
+			Icon = 0,
+			List = 1,
+		}
 
 		private bool isInstantiatingPrefab = true;
 		private bool autoSelectNewItems = true;
 		private bool preferExistingCanvas = false;
 		private bool useAutoNaming = false;
 		private string searchQuery = string.Empty;
+		private PaletteViewMode viewMode = PaletteViewMode.List;
 
 		[MenuItem(MenuPaths.UIWidgets.WidgetsWindow, false, 1101)]
 		[MenuItem(MenuPaths.UIWidgets.GameObjectOpen, false, 0)]
@@ -38,6 +46,7 @@ namespace AetherNexus.UIWidgets.Editor
 			preferExistingCanvas = EditorPrefs.GetBool(PrefKey_PreferExistingCanvas, false);
 			useAutoNaming = EditorPrefs.GetBool(PrefKey_UseAutoNaming, false);
 			searchQuery = EditorPrefs.GetString(PrefKey_SearchQuery, string.Empty);
+			viewMode = (PaletteViewMode)EditorPrefs.GetInt(PrefKey_ViewMode, (int)PaletteViewMode.List);
 			// Idempotent: the palette can be instanced both as the floating window and as the
 			// hidden instance backing the scene overlay. Only one scene-drag handler must exist.
 			SceneView.duringSceneGui -= OnSceneViewGUI;
@@ -52,6 +61,7 @@ namespace AetherNexus.UIWidgets.Editor
 			EditorPrefs.SetBool(PrefKey_PreferExistingCanvas, preferExistingCanvas);
 			EditorPrefs.SetBool(PrefKey_UseAutoNaming, useAutoNaming);
 			EditorPrefs.SetString(PrefKey_SearchQuery, searchQuery ?? string.Empty);
+			EditorPrefs.SetInt(PrefKey_ViewMode, (int)viewMode);
 		}
 
 		private static void OnSceneViewGUI(SceneView sceneView)

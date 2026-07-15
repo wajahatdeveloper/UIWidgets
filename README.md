@@ -12,7 +12,7 @@ Free Unity UGUI widget library for the **AetherNexus** toolkit (`com.aethernexus
 |------|----------------|
 | **Panels & modals** | `Dialog`, `InputDialog`, `LoadingPanel`, `WaitPanel`, `Fader` with fluent builders |
 | **ButtonX** | Enhanced UGUI button: states, long-press, double-click, hold-repeat, toggle |
-| **ScrollableList** | Virtualized pooled list with `ObservableList<T>` binding |
+| **ScrollList** | Virtualized pooled list with `ObservableList<T>` binding |
 | **Navigation & chrome** | Context menus, tabs, sliders, card UI, toasts, tooltips |
 | **Graphics & effects** | Procedural primitives, gradients, soft masks, UI effects |
 | **LayoutX** | Single-component flow / grid layout |
@@ -26,7 +26,7 @@ Docs index: [Documentation~/index.md](Documentation~/index.md)
 2. Package Manager → **My Assets** → **UI Widgets** → Download / Import.
 3. Project Settings → Player → **Active Input Handling** = Input System Package **or** Both.
 4. Confirm **uGUI** is present (`com.unity.ugui` — included in typical URP templates).
-5. Optional: Package Manager → Samples → import **Input Dialog Demo**.
+5. Optional: Package Manager → Samples → import **UI Widgets Demo**.
 
 **Do not** install Cysharp UniTask separately. Foundation Platform embeds UniTask; a second UniTask package collides on the `UniTask` assembly name.
 
@@ -53,9 +53,13 @@ Toast.Create("Saved")
     .WithDuration(3f)
     .WithColor(ToastColor.Green)
     .AtPosition(ToastPosition.TopRight)
-    .Show(); // requires a ToastUI instance in the scene (e.g. Widgets/Canvas_ToastUI)
+    .Show(); // requires ToastUI in the scene (Singletons → Toast Message Canvas)
 
-scrollableList.SetDataSource(observableItems, x => (x.Name, x.Subtitle, x.Icon));
+var items = new[] {
+    new ScrollListItemData("Alpha", "First"),
+    new ScrollListItemData("Beta", "Second"),
+};
+scrollList.SetDataSource(items);
 ```
 
 Runtime types live under `AetherNexus.UIWidgets`. Editor tools under `AetherNexus.UIWidgets.Editor`.
@@ -64,8 +68,8 @@ Runtime types live under `AetherNexus.UIWidgets`. Editor tools under `AetherNexu
 
 | Menu | Purpose |
 |------|---------|
-| **Window → UIWidgets → UI Widgets...** | Browse / instantiate widget prefabs |
-| **GameObject → UIWidgets → …** | Create panels, buttons, sliders, etc. |
+| **Window → UIWidgets → UI Widgets...** | Browse / instantiate widget prefabs (includes **Default UI** stock creates) |
+| **GameObject → UI (Canvas) → …** | Create unique widgets flat under Unity UI (Panel Base, ButtonX, ScrollList, Singletons, …) |
 | **Tools → UIWidgets → Settings...** | Package settings |
 | **Tools → UIWidgets → Scene Picker Enabled** | Scene pick toggle |
 

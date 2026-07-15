@@ -70,7 +70,7 @@ namespace AetherNexus.UIWidgets.Editor
             if (!path.EndsWith(".prefab", System.StringComparison.OrdinalIgnoreCase))
                 path += ".prefab";
 
-            var tempParent = new GameObject("TempScrollableListPrefabDuplicate");
+            var tempParent = new GameObject("TempScrollListPrefabDuplicate");
             tempParent.hideFlags = HideFlags.HideAndDontSave;
             GameObject instance = Object.Instantiate(prefab, tempParent.transform);
             if (instance == null)

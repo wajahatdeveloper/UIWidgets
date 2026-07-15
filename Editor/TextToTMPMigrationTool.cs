@@ -13,7 +13,7 @@ namespace AetherNexus.UIWidgets.Editor
     /// </summary>
     public static class TextToTMPMigrationTool
     {
-        private const string MenuPath = "GameObject/UI/Upgrade Text to TextMeshProUGUI";
+        private const string MenuPath = "GameObject/UI (Canvas)/Upgrade Text to TextMeshProUGUI";
 
         [MenuItem(MenuPath, false, 30)]
         private static void MigrateSelectedObjects()

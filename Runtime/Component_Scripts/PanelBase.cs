@@ -38,8 +38,17 @@ namespace AetherNexus.UIWidgets
         /// </summary>
         public void Show()
         {
-            if (isModal && ModalService.HasInstance)
+            if (isModal)
             {
+                if (!ModalService.HasInstance)
+                {
+                    DebugX.Builder(LogChannels.UI).WithContext(gameObject).Warning(
+                        "PanelBase '{Name}' Is Modal is on but ModalService is missing in the scene; showing without backdrop.",
+                        gameObject.name);
+                    ShowInternal();
+                    return;
+                }
+
                 ModalService.Instance.Show(this);
                 return;
             }

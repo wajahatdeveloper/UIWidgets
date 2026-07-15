@@ -243,6 +243,10 @@ namespace AetherNexus.UIWidgets
                 // Try set initial focus to the first active & interactable button
                 TryFocusDefaultButton();
             }
+            else
+            {
+                DebugX.Logger(LogChannels.UI).Error("[UI:ERROR:Panel] Dialog.panel is not assigned; cannot show dialog.");
+            }
 
             if (enableLogging)
                 DebugX.Logger(LogChannels.UI).Info("[UI:INFO:Panel] Dialog Shown in {SceneName}", SceneManager.GetActiveScene().name);
@@ -297,6 +301,10 @@ namespace AetherNexus.UIWidgets
             {
                 panel.SetActive(true);
                 TryFocusDefaultButton();
+            }
+            else
+            {
+                DebugX.Logger(LogChannels.UI).Error("[UI:ERROR:Panel] Dialog.panel is not assigned; cannot show dialog.");
             }
 
             if (enableLogging)

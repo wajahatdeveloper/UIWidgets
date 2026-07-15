@@ -2,12 +2,21 @@
 
 All notable changes to this package are documented here. Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/); versioning follows [Semantic Versioning](https://semver.org/).
 
+## [Unreleased]
+
+### Changed
+- Hierarchy create menus flattened under `GameObject/UI (Canvas)/` (unique widgets only; no parallel `UIWidgets` create root)
+- Dropped curated stock clones (Image/Text/Toggle/etc.) from catalog; Window/Scene Overlay **Default UI** section creates Unity/TMP stock controls instead
+- Canvas/EventSystem helpers always use stock Unity objects
+- Hierarchy menu: removed Layout X (use palette Behaviours / Add Component), ButtonTMP, and Setup Default State (palette Behaviours covers UI Default State)
+- **ToastUI**: FIFO queue, layout-only positioning (no size-destroying anchors), luminance text contrast, fail-fast color/ref validation, click-to-dismiss raycasts + ButtonX wiring; builder adds `WithSeverity`, `Replace`, `WithIcon`, `DismissAll`
+
 ## [1.0.0] - 2026-07-07
 
 ### Added
 - Free Asset Store UPM package: `com.aethernexus.uiwidgets` (author AetherNexus)
-- UGUI widgets: panels/modals, ButtonX, ScrollableList, tabs, sliders, cards, toasts, tooltips, procedural graphics, UI effects, LayoutX
-- Editor: UI Widgets window, GameObject/UIWidgets create menus, Scene Picker, Text→TMP migration, ButtonX upgrade
+- UGUI widgets: panels/modals, ButtonX, ScrollList, tabs, sliders, cards, toasts, tooltips, procedural graphics, UI effects, LayoutX
+- Editor: UI Widgets window, GameObject/UI (Canvas) create menus, Scene Picker, Text→TMP migration, ButtonX upgrade
 - Sample: **UI Widgets Demo** (`Samples~/UIWidgets Demo`) — Dialog / InputDialog / Fader / LineMessage / LoadingPanel / WaitPanel / ModalService harnesses + scene
 - Docs: README, Documentation~/index, ARCHITECTURE, SAMPLES, LICENSE (MIT), Third-Party Notices
 
