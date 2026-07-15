@@ -9,7 +9,9 @@ namespace AetherNexus.UIWidgets.Editor
 	/// </summary>
 	public static class AnchorTools
 	{
+		// CONTEXT: right-click RectTransform. Tools path carries Alt+O (CONTEXT hotkeys do not fire).
 		[MenuItem(AetherNexus.FoundationPlatform.Utilities.Menus.MenuPaths.UIWidgetsContext.FitAnchors, false, 901)]
+		[MenuItem(AetherNexus.FoundationPlatform.Utilities.Menus.MenuPaths.UIWidgetsTools.FitAnchors, false, 901)]
 		public static void FitAnchorsToCorners()
 		{
 			foreach (var go in Selection.gameObjects)
@@ -38,6 +40,18 @@ namespace AetherNexus.UIWidgets.Editor
 
 				EditorUtility.SetDirty(rect);
 			}
+		}
+
+		[MenuItem(AetherNexus.FoundationPlatform.Utilities.Menus.MenuPaths.UIWidgetsContext.FitAnchors, true)]
+		[MenuItem(AetherNexus.FoundationPlatform.Utilities.Menus.MenuPaths.UIWidgetsTools.FitAnchors, true)]
+		private static bool FitAnchorsToCornersValidate()
+		{
+			foreach (var go in Selection.gameObjects)
+			{
+				if (go.transform is RectTransform rect && rect.parent is RectTransform)
+					return true;
+			}
+			return false;
 		}
 	}
 }

@@ -34,13 +34,24 @@ namespace AetherNexus.UIWidgets
 			DebugX.Logger(LogChannels.UI).Info("[UI:INFO:Test] LayoutX Grid.");
 		}
 
-		[ContextMenu("Toggle Axis")]
+		[ContextMenu("Toggle Main Axis")]
 		public void TestToggleAxis()
 		{
 			if (!Ensure())
 				return;
-			layoutX.Vertical = !layoutX.Vertical;
-			DebugX.Logger(LogChannels.UI).Info("[UI:INFO:Test] LayoutX Vertical={V}.", layoutX.Vertical);
+			layoutX.Axis = layoutX.Axis == LayoutX.MainAxis.Horizontal
+				? LayoutX.MainAxis.Vertical
+				: LayoutX.MainAxis.Horizontal;
+			DebugX.Logger(LogChannels.UI).Info("[UI:INFO:Test] LayoutX Axis={A}.", layoutX.Axis);
+		}
+
+		[ContextMenu("Toggle Reverse")]
+		public void TestToggleReverse()
+		{
+			if (!Ensure())
+				return;
+			layoutX.ReverseArrangement = !layoutX.ReverseArrangement;
+			DebugX.Logger(LogChannels.UI).Info("[UI:INFO:Test] LayoutX Reverse={R}.", layoutX.ReverseArrangement);
 		}
 
 		[ContextMenu("Add Child")]
@@ -64,16 +75,13 @@ namespace AetherNexus.UIWidgets
 			return false;
 		}
 
-		private void OnGUI()
+		public void DrawImgui(ref float y)
 		{
-			if (!UIWidgetsDemoImgui.IsSection(UIWidgetsDemoImgui.Section.Layout))
-				return;
-
-			float y = UIWidgetsDemoImgui.ContentY;
 			UIWidgetsDemoImgui.Label(ref y, layoutX != null ? layoutX.name : "no LayoutX");
 			if (UIWidgetsDemoImgui.Button(ref y, "LX Compact")) TestCompact();
 			if (UIWidgetsDemoImgui.Button(ref y, "LX Grid")) TestGrid();
 			if (UIWidgetsDemoImgui.Button(ref y, "LX Axis")) TestToggleAxis();
+			if (UIWidgetsDemoImgui.Button(ref y, "LX Reverse")) TestToggleReverse();
 			if (UIWidgetsDemoImgui.Button(ref y, "LX +Child")) TestAddChild();
 		}
 	}

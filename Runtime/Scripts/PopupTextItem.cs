@@ -86,12 +86,10 @@ namespace AetherNexus.UIWidgets
                 Vector3 position = startWorldPosition + Vector3.up * (riseDistance * riseT);
                 transform.position = position;
 
-                if (billboard && camera != null)
-                {
-                    Vector3 forward = transform.position - camera.transform.position;
-                    if (forward.sqrMagnitude > 0.0001f)
-                        transform.rotation = Quaternion.LookRotation(forward);
-                }
+				// UGUI faces the camera when rotation matches the camera (not LookRotation toward it —
+				// that flips the canvas and back-face culls the text).
+				if (billboard && camera != null)
+					transform.rotation = camera.transform.rotation;
 
                 if (canvasGroup != null && elapsed >= fadeStart && fadeDuration > 0f)
                 {

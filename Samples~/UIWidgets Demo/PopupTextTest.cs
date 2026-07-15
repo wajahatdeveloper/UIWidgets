@@ -7,14 +7,8 @@ namespace AetherNexus.UIWidgets
 	/// <summary>Play Mode harness for <see cref="PopupText"/>.</summary>
 	public class PopupTextTest : MonoBehaviour
 	{
-		[Tooltip("World / screen anchor for spawn. Defaults to this transform.")]
+		[Tooltip("Optional world anchor. If empty, spawns at screen center in front of the main camera.")]
 		public Transform spawnAnchor;
-
-		private void OnEnable()
-		{
-			if (spawnAnchor == null)
-				spawnAnchor = transform;
-		}
 
 		[ContextMenu("Show Popup")]
 		public void TestShow()
@@ -25,17 +19,24 @@ namespace AetherNexus.UIWidgets
 				return;
 			}
 
-			var pos = spawnAnchor != null ? spawnAnchor.position : Vector3.zero;
-			PopupText.Instance.Show(pos, "+25", Color.yellow);
+			PopupText.Instance.Show(ResolveSpawnPosition(), "+25", Color.yellow);
 			DebugX.Logger(LogChannels.UI).Info("[UI:INFO:Test] PopupText shown.");
 		}
 
-		private void OnGUI()
+		private Vector3 ResolveSpawnPosition()
 		{
-			if (!UIWidgetsDemoImgui.IsSection(UIWidgetsDemoImgui.Section.Feedback))
-				return;
+			if (spawnAnchor != null)
+				return spawnAnchor.position;
 
-			float y = UIWidgetsDemoImgui.ContentY + 160f;
+			var cam = Camera.main;
+			if (cam != null)
+				return cam.ViewportToWorldPoint(new Vector3(0.5f, 0.55f, 5f));
+
+			return Vector3.zero;
+		}
+
+		public void DrawImgui(ref float y)
+		{
 			UIWidgetsDemoImgui.Label(ref y, PopupText.HasInstance ? "Popup ok" : "need Popup");
 			if (UIWidgetsDemoImgui.Button(ref y, "Popup +25")) TestShow();
 		}

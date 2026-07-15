@@ -55,6 +55,8 @@ MonoBehaviour:
     riseSpeed: 1
     fadeDuration: 0.5
     horizontalJitter: 0.25
+    verticalStackSpacing: 0.35
+    stackResetSeconds: 0.15
     billboard: 1
     useUnscaledTime: 1
 --- !u!1 &7711111111111111111

@@ -198,17 +198,27 @@ namespace AetherNexus.UIWidgets
             itemContainer = canvas.transform as RectTransform;
         }
 
-        private Camera ResolveCamera()
-        {
-            if (worldCamera != null)
-                return worldCamera;
-            if (itemContainer != null)
-            {
-                var canvas = itemContainer.GetComponent<Canvas>();
-                if (canvas != null && canvas.worldCamera != null)
-                    return canvas.worldCamera;
-            }
-            return Camera.main;
-        }
+		private Camera ResolveCamera()
+		{
+			Camera cam = worldCamera;
+			if (cam == null && itemContainer != null)
+			{
+				var canvas = itemContainer.GetComponent<Canvas>();
+				if (canvas != null)
+					cam = canvas.worldCamera;
+			}
+
+			if (cam == null)
+				cam = Camera.main;
+
+			if (cam != null && itemContainer != null)
+			{
+				var canvas = itemContainer.GetComponent<Canvas>();
+				if (canvas != null && canvas.worldCamera == null)
+					canvas.worldCamera = cam;
+			}
+
+			return cam;
+		}
     }
 }

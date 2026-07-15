@@ -129,7 +129,7 @@ MonoBehaviour:
       widgetName: PopupText
       widgetIcon: {fileID: 0}
       widgetPrefab: {fileID: 4314666065513163139, guid: a284a5e80e643224c974229d0120e660, type: 3}
-      noCanvasRequired: 0
+      noCanvasRequired: 1
     noCanvasRequired: 0
   - category: Sliders
     widgetName: Slider

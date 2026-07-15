@@ -117,8 +117,12 @@ scrollList.SetDataSource(observableItems); // ObservableList<T> — reactive aut
 
 `LayoutX` (`Runtime/Layout/LayoutX.cs`) — single-component flow/grid layout engine.
 
-- Modes: `Compact` (flow, wraps by element size) and `Grid` (uniform cells), on either axis
-- Axis-relative constraints (`MaxItemsPerLine` / `MaxLines`), line + cross alignment, optional child size driving (`Preferred`), rect-size measuring, child rotation reset
+- Modes: `Compact` (flow, wraps by element size) and `Grid` (uniform cells)
+- **Main Axis:** `Horizontal` (flow right, wrap to next row) or `Vertical` (flow down, wrap to next column)
+- Axis-relative constraints (`Flexible` / `MaxItemsPerLine` / `MaxLines`), line + cross alignment, `childAlignment` for content-block anchor
+- Child size: `SizeControl.None` measures/keeps rect size; `Preferred` drives preferred size; optional `useChildRectSize`, `resetChildRotation`
+- Parity: `reverseArrangement`, `childForceExpandMain` / `childForceExpandCross` (distribute free main space; stretch to line cross; Grid Flexible grows cells)
+- Preferred sizes are ContentSizeFitter-safe: unconstrained one-line preferred on the main axis, wrap rebuild on the cross axis
 - Extend by adding to `LayoutMode`. Editor: `LayoutXEditor`.
 
 ---

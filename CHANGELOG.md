@@ -4,7 +4,11 @@ All notable changes to this package are documented here. Format follows [Keep a 
 
 ## [Unreleased]
 
+### Fixed
+- **LayoutX**: Compact wrap / preferred sizes (CSF-safe), SizeControl.None vs Preferred measure, layout rebuild on both axes
+
 ### Changed
+- **LayoutX**: `vertical` bool → `Main Axis` enum (`Horizontal` / `Vertical`); adds reverse arrangement + force expand main/cross
 - Hierarchy create menus flattened under `GameObject/UI (Canvas)/` (unique widgets only; no parallel `UIWidgets` create root)
 - Dropped curated stock clones (Image/Text/Toggle/etc.) from catalog; Window/Scene Overlay **Default UI** section creates Unity/TMP stock controls instead
 - Canvas/EventSystem helpers always use stock Unity objects
