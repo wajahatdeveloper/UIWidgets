@@ -79,7 +79,7 @@ Runtime types live under `AetherNexus.UIWidgets`. Editor tools under `AetherNexu
 |----------|------|
 | `UIWidgets.Runtime` | Runtime widgets |
 | `UIWidgets.Editor` | Editor tooling |
-| `UIWidgets.GameEngineCoreIntegration.Editor` | Optional Central Authoring plugin — compiles only when scripting define `HOMAM_GEC` is present (GameEngineCore installs). Inactive for a standalone UI Widgets project. |
+| `UIWidgets.GameEngineCoreIntegration.Editor` | Optional Central Authoring plugin — compiles only when GameEngineCore installs. Inactive for a standalone UI Widgets project. |
 
 ## Package Integration Manifest
 

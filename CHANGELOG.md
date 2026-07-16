@@ -27,7 +27,6 @@ All notable changes to this package are documented here. Format follows [Keep a 
 ### Changed
 - Depends on Foundation Platform (`com.aethernexus.foundationplatform`) for UniTask embed and shared runtime — no direct UniTask package dependency
 - Public namespaces: `AetherNexus.UIWidgets` / `AetherNexus.UIWidgets.Editor`
-- Optional GameEngineCore Central Authoring integration is gated by scripting define `HOMAM_GEC` (inactive without GameEngineCore)
 
 ### Notes
 - Requires Unity **6000.3.10f1+**. Fast Enter Play Mode is **not** supported — keep Domain Reload enabled.

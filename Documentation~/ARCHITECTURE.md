@@ -10,20 +10,9 @@ General-purpose Unity UGUI widget library. Depends only on `com.aethernexus.foun
 |---|---|---|---|
 | `UIWidgets.Runtime` | `Runtime/` | TextMeshPro, Input System, UniTask, FoundationPlatform.Runtime | ships |
 | `UIWidgets.Editor` | `Editor/` | FoundationPlatform.Runtime/Editor, UIWidgets.Runtime | ships |
-| `UIWidgets.GameEngineCoreIntegration.Editor` | `Editor/Integration/GameEngineCore/` | UIWidgets.Editor, GameEngineCore.Editor | **optional** — compiles only when scripting define `HOMAM_GEC` is present |
+| `UIWidgets.GameEngineCoreIntegration.Editor` | `Editor/Integration/GameEngineCore/` | UIWidgets.Editor, GameEngineCore.Editor
 
 **Namespaces:** `AetherNexus.UIWidgets` (runtime) and `AetherNexus.UIWidgets.Editor` (editor). First-party layout (`LayoutX`) and scene picking (`ScenePicker`) ship in this package.
-
-### Optional GameEngineCore integration
-
-Core UIWidgets has **zero** hard dependency on GameEngineCore. The only coupling — a Central Authoring plugin — is isolated in `UIWidgets.GameEngineCoreIntegration.Editor`, gated by the `HOMAM_GEC` scripting define (set by GameEngineCore when that product is installed):
-
-- **With GameEngineCore** — define present → integration compiles → Central Authoring can discover the Widget Setup workflow.
-- **Standalone install** — no define → integration assembly is skipped → package compiles clean.
-
-Do not re-add a `GameEngineCore.Editor` reference to the core Editor asmdef.
-
----
 
 ## Base classes
 

@@ -9,7 +9,7 @@ using UnityEngine.UI;
 
 namespace AetherNexus.UIWidgets
 {
-	public class ToastUI : PersistentSingletonBehaviour<ToastUI>
+	public class ToastUI : SingletonBehaviour<ToastUI>
 	{
 		[Header("UI References :")]
 		[SerializeField] private CanvasGroup uiCanvasGroup;
