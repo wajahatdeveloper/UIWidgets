@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using AetherNexus.FoundationPlatform.DebugX;
 using AetherNexus.FoundationPlatform.Extensions;
-using AetherNexus.FoundationPlatform.FrameworkInspector;
+using AetherNexus.FoundationPlatform.AetherInspector;
 using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.SceneManagement;

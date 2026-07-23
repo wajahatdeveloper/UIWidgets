@@ -1,4 +1,4 @@
-using AetherNexus.FoundationPlatform.FrameworkInspector.Editor;
+using AetherNexus.FoundationPlatform.AetherInspector.Editor;
 using UnityEditor;
 using UnityEngine;
 
@@ -6,7 +6,7 @@ namespace AetherNexus.UIWidgets.Editor
 {
     [CustomEditor(typeof(ScrollList), true)]
     [CanEditMultipleObjects]
-    public class ScrollListEditor : FrameworkEditor
+    public class ScrollListEditor : AetherInspectorEditor
     {
         private SerializedProperty _itemPrefab;
 

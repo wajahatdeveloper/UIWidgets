@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using AetherNexus.FoundationPlatform;
 using AetherNexus.FoundationPlatform.DebugX;
-using AetherNexus.FoundationPlatform.FrameworkInspector;
+using AetherNexus.FoundationPlatform.AetherInspector;
 using UnityEngine;
 using UnityEngine.UI;
 

@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using AetherNexus.FoundationPlatform;
 using AetherNexus.FoundationPlatform.DebugX;
-using AetherNexus.FoundationPlatform.FrameworkInspector;
+using AetherNexus.FoundationPlatform.AetherInspector;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
