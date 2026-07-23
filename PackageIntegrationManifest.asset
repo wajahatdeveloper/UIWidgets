@@ -26,12 +26,7 @@ MonoBehaviour:
   icon: {fileID: 0}
   gameplayTags: []
   typeMappings: []
-  authoringChecklist:
-  - Step: Open UI Widgets Window (Window → UIWidgets → UI Widgets...) to browse and place widgets.
-  successSignal: Widget prefabs render and respond in Play Mode.
-  exampleSceneAsset: {fileID: 0}
   documentationPath:
-  prefabFolderPath:
   validateMenuPaths: []
   packageToolMenuPaths: []
   toolsMenuPrefix: UIWidgets
