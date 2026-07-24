@@ -12,22 +12,37 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6732b2eab66f6ec45ae6c3d58d1fdc62, type: 3}
   m_Name: PackageIntegrationManifest
   m_EditorClassIdentifier: GameEngineCore.Editor::GameEngineCore.Editor.PackageIntegration.PackageIntegrationManifest
-  serializationData:
-    SerializedFormat: 2
-    SerializedBytes:
-    ReferencedUnityObjects: []
-    SerializedBytesString:
-    Prefab: {fileID: 0}
-    PrefabModificationsReferencedUnityObjects: []
-    PrefabModifications: []
-    SerializationNodes: []
   packageId: UIWidgets
   displayName: UI Widgets
   icon: {fileID: 0}
-  gameplayTags: []
-  typeMappings: []
-  documentationPath:
-  validateMenuPaths: []
+  documentationPath: 
   packageToolMenuPaths: []
-  toolsMenuPrefix: UIWidgets
-  setupInstructions:
+  setupInstructions: 
+  gameplayTags: []
+  typeMappings:
+  - TypeScript: {fileID: 11500000, guid: c640406ebf25b044c984be73ec6b8eb7, type: 3}
+    AuthoringTier: 2
+    StructuredPatterns:
+    - ConcretePrefix: 
+      Tokens:
+      - Kind: 3
+        Literal: 
+  - TypeScript: {fileID: 11500000, guid: 17f60352653044d45b7b8ff76994cba1, type: 3}
+    AuthoringTier: 0
+    StructuredPatterns:
+    - ConcretePrefix: 
+      Tokens:
+      - Kind: 3
+        Literal: 
+  requiredProjectFolders: []
+  productAssemblyScaffold:
+    Enabled: 0
+    AsmdefAssetPath: 
+    AsmdefName: 
+    AsmdefReferences: []
+    RootNamespace: 
+    GlobalUsingsAssetPath: 
+    GlobalUsingNamespaces: []
+    CscRspAssetPath: 
+    CscRspLines: []
+    SeedTextFiles: []
