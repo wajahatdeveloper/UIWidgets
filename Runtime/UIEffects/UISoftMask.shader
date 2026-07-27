@@ -23,6 +23,134 @@ Shader "UIWidgets/SoftMask"
         [Toggle(UNITY_UI_ALPHACLIP)] _UseUIAlphaClip ("Use Alpha Clip", Float) = 0
     }
 
+    // URP/SRP-compatible path. SRP picks this SubShader over the Built-in one below via the
+    // RenderPipeline tag; HLSL + CBUFFER(UnityPerMaterial) keeps it SRP-Batcher compatible.
+    SubShader
+    {
+        Tags
+        {
+            "Queue" = "Transparent"
+            "IgnoreProjector" = "True"
+            "RenderType" = "Transparent"
+            "PreviewType" = "Plane"
+            "CanUseSpriteAtlas" = "True"
+            "RenderPipeline" = "UniversalPipeline"
+        }
+
+        Stencil
+        {
+            Ref [_Stencil]
+            Comp [_StencilComp]
+            Pass [_StencilOp]
+            ReadMask [_StencilReadMask]
+            WriteMask [_StencilWriteMask]
+        }
+
+        Cull Off
+        Lighting Off
+        ZWrite Off
+        ZTest [unity_GUIZTestMode]
+        Blend SrcAlpha OneMinusSrcAlpha
+        ColorMask [_ColorMask]
+
+        Pass
+        {
+            Name "Default"
+
+            HLSLPROGRAM
+            #pragma vertex vert
+            #pragma fragment frag
+            #pragma target 2.0
+
+            #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
+
+            #pragma multi_compile_local _ UNITY_UI_CLIP_RECT
+            #pragma multi_compile_local _ UNITY_UI_ALPHACLIP
+
+            struct appdata_t
+            {
+                float4 vertex : POSITION;
+                float4 color : COLOR;
+                float2 texcoord : TEXCOORD0;
+                UNITY_VERTEX_INPUT_INSTANCE_ID
+            };
+
+            struct v2f
+            {
+                float4 vertex : SV_POSITION;
+                half4 color : COLOR;
+                float2 texcoord : TEXCOORD0;
+                float4 worldPosition : TEXCOORD1;
+                float2 maskUV : TEXCOORD2;
+                UNITY_VERTEX_OUTPUT_STEREO
+            };
+
+            TEXTURE2D(_MainTex);
+            SAMPLER(sampler_MainTex);
+            TEXTURE2D(_SoftMaskTex);
+            SAMPLER(sampler_SoftMaskTex);
+
+            CBUFFER_START(UnityPerMaterial)
+            half4 _Color;
+            half4 _TextureSampleAdd;
+            float4 _ClipRect;
+            float4 _MainTex_ST;
+
+            float _SoftMaskCutoff;
+            float _SoftMaskInvert;
+            float4x4 _WorldToMask;
+            // xy = mask rect min, zw = 1 / mask rect size (mask-local space)
+            float4 _MaskRect;
+            CBUFFER_END
+
+            v2f vert(appdata_t v)
+            {
+                v2f OUT;
+                UNITY_SETUP_INSTANCE_ID(v);
+                UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(OUT);
+
+                OUT.worldPosition = v.vertex;
+                OUT.vertex = TransformObjectToHClip(v.vertex.xyz);
+                OUT.texcoord = TRANSFORM_TEX(v.texcoord, _MainTex);
+                OUT.color = v.color * _Color;
+
+                float4 world = mul(unity_ObjectToWorld, v.vertex);
+                float4 maskLocal = mul(_WorldToMask, world);
+                OUT.maskUV = (maskLocal.xy - _MaskRect.xy) * _MaskRect.zw;
+
+                return OUT;
+            }
+
+            half4 frag(v2f IN) : SV_Target
+            {
+                half4 color = (SAMPLE_TEXTURE2D(_MainTex, sampler_MainTex, IN.texcoord) + _TextureSampleAdd) * IN.color;
+
+                half mask = SAMPLE_TEXTURE2D(_SoftMaskTex, sampler_SoftMaskTex, saturate(IN.maskUV)).a;
+                mask = lerp(mask, 1.0 - mask, _SoftMaskInvert);
+
+                // Fully transparent outside the mask rect.
+                float2 inside = step(0.0, IN.maskUV) * step(IN.maskUV, 1.0);
+                mask *= inside.x * inside.y;
+
+                // Remap so everything at or below the cutoff is invisible; the rest stays soft.
+                mask = saturate((mask - _SoftMaskCutoff) / max(1.0 - _SoftMaskCutoff, 0.001));
+                color.a *= mask;
+
+                #ifdef UNITY_UI_CLIP_RECT
+                color.a *= UnityGet2DClipping(IN.worldPosition.xy, _ClipRect);
+                #endif
+
+                #ifdef UNITY_UI_ALPHACLIP
+                clip(color.a - 0.001);
+                #endif
+
+                return color;
+            }
+            ENDHLSL
+        }
+    }
+
+    // Built-in Render Pipeline fallback (no RenderPipeline tag → matched when URP/HDRP absent).
     SubShader
     {
         Tags
