@@ -32,8 +32,13 @@ namespace AetherNexus.UIWidgets
         private int xPowerDifference;
 
         ///Static variables can be used across the scene if this script is in it.
-        ///Thankfully it doesn't matter if another script attempts to use the variable and this script isn't in the scene. 
+        ///Thankfully it doesn't matter if another script attempts to use the variable and this script isn't in the scene.
         public static bool canUseHorizontalAxis = true;
+
+        // If a session ends mid-toggle (object destroyed while false), the flag would stay
+        // false forever without domain reload and lock out every card stack next session.
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        private static void ResetCanUseHorizontalAxis() => canUseHorizontalAxis = true;
 
         void Start()
         {

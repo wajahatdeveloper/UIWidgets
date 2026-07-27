@@ -19,6 +19,11 @@ namespace AetherNexus.UIWidgets
         private static int _counter = 0;
         private Coroutine _timerRoutine;
 
+        // Without domain reload the Show/Hide reference-count survives Stop->Play; reset it
+        // so a mid-session Show/Hide imbalance from the prior session can't desync the next one.
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        private static void ResetCounter() => _counter = 0;
+
         public float loadingPercentage
         {
             get { return loadingBarImage != null ? loadingBarImage.fillAmount * 100.0f : 0f; }
