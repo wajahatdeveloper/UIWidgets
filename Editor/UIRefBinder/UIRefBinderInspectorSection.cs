@@ -4,17 +4,15 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using AetherNexus.FoundationPlatform.AetherInspector.Editor;
 using UnityEditor;
 using UnityEngine;
 
 namespace AetherNexus.UIWidgets.Editor.UIRefBinder
 {
 	/// <summary>
-	/// Adds a "Bind UI From Selection" foldout to every MonoBehaviour's Inspector via the shared
-	/// AetherInspectorEditor extension hook. Lets a designer lock the Inspector on their hand-written
-	/// view script, multi-select UI elements in the Hierarchy, and wire/declare fields for them without
-	/// ever leaving that Inspector.
+	/// Draws a "Bind UI From Selection" foldout for a given UIRefBinder field. Invoked exclusively by
+	/// UIRefBinderDrawer, so this only ever appears in the Inspector row of whatever
+	/// `[SerializeField] private UIRefBinder ...;` field a script declares — never injected elsewhere.
 	/// </summary>
 	internal static class UIRefBinderInspectorSection
 	{
@@ -28,19 +26,31 @@ namespace AetherNexus.UIWidgets.Editor.UIRefBinder
 			public string newFieldName = string.Empty;
 		}
 
-		private static bool s_expanded;
-		private static readonly Dictionary<GameObject, RowState> s_rows = new Dictionary<GameObject, RowState>();
+		private static readonly Dictionary<(MonoBehaviour view, string path), bool> s_expandedByView =
+			new Dictionary<(MonoBehaviour view, string path), bool>();
+		private static readonly Dictionary<(MonoBehaviour view, string path, GameObject go), RowState> s_rows =
+			new Dictionary<(MonoBehaviour view, string path, GameObject go), RowState>();
 
-		[InitializeOnLoadMethod]
-		private static void Register()
-		{
-			AetherInspectorEditor.DrawExtraSections += OnDrawExtraSections;
-		}
+		// Parsing a script's [SerializeField] declarations means reading the whole file from disk and
+		// running it through regex — too slow to redo on every OnGUI repaint (this foldout redraws
+		// constantly while dragging a Hierarchy multi-select). Cached per script path and only
+		// re-parsed when the file's last-write time actually changes.
+		private static readonly Dictionary<string, (long writeTimeTicks, List<DeclaredFieldInfo> declared)> s_declaredFieldsCache =
+			new Dictionary<string, (long, List<DeclaredFieldInfo>)>();
 
-		private static void OnDrawExtraSections(UnityEditor.Editor editor)
+		/// <summary>
+		/// Draws the "Bind UI From Selection" foldout for the owning MonoBehaviour of
+		/// <paramref name="property"/>. Safe to call from multiple simultaneously-visible drawers
+		/// targeting different fields/owners — all cached state below is keyed per (owner, field path).
+		/// </summary>
+		internal static void Draw(SerializedProperty property)
 		{
-			if (editor.targets.Length != 1 || editor.target is not MonoBehaviour view)
+			if (property == null)
 				return;
+			var view = property.serializedObject.targetObject as MonoBehaviour;
+			if (view == null)
+				return;
+			string path = property.propertyPath;
 
 			MonoScript script = MonoScript.FromMonoBehaviour(view);
 			if (script == null)
@@ -50,8 +60,11 @@ namespace AetherNexus.UIWidgets.Editor.UIRefBinder
 				return;
 
 			EditorGUILayout.Space();
-			s_expanded = EditorGUILayout.Foldout(s_expanded, "Bind UI From Selection", true);
-			if (!s_expanded)
+			var expandedKey = (view, path);
+			bool expanded = s_expandedByView.TryGetValue(expandedKey, out var isExpanded) && isExpanded;
+			expanded = EditorGUILayout.Foldout(expanded, "Bind UI From Selection", true);
+			s_expandedByView[expandedKey] = expanded;
+			if (!expanded)
 				return;
 
 			var selected = new List<GameObject>();
@@ -72,18 +85,16 @@ namespace AetherNexus.UIWidgets.Editor.UIRefBinder
 					return;
 				}
 
-				string scriptSource;
-				try { scriptSource = File.ReadAllText(Path.GetFullPath(scriptPath)); }
-				catch (Exception ex)
+				if (!TryGetDeclaredFieldsCached(scriptPath, out List<DeclaredFieldInfo> declaredFields, out string readError))
 				{
-					EditorGUILayout.HelpBox($"Could not read script source: {ex.Message}", MessageType.Error);
+					EditorGUILayout.HelpBox($"Could not read script source: {readError}", MessageType.Error);
 					return;
 				}
 
-				List<ExistingFieldInfo> existingFields = ScriptFieldScanner.ScanFields(view, scriptSource);
+				List<ExistingFieldInfo> existingFields = ScriptFieldScanner.ToExistingFields(property.serializedObject, declaredFields);
 				var unassignedFields = existingFields.Where(f => !f.isAssigned).ToList();
 
-				PruneStaleRows(selected);
+				PruneStaleRows(view, path, selected);
 
 				var claimedExistingFields = new HashSet<string>();
 				var claimedNewNames = new HashSet<string>(existingFields.Select(f => f.fieldName));
@@ -91,7 +102,7 @@ namespace AetherNexus.UIWidgets.Editor.UIRefBinder
 
 				foreach (var go in selected)
 				{
-					RowState row = GetOrCreateRow(go, unassignedFields, claimedExistingFields, claimedNewNames);
+					RowState row = GetOrCreateRow(view, path, go, unassignedFields, claimedExistingFields, claimedNewNames);
 					rowsInOrder.Add(row);
 					DrawRow(row, go, unassignedFields, claimedExistingFields);
 
@@ -110,7 +121,7 @@ namespace AetherNexus.UIWidgets.Editor.UIRefBinder
 				{
 					if (GUILayout.Button("Bind", GUILayout.Height(24)))
 					{
-						Commit(view, scriptPath, rowsInOrder);
+						Commit(property, view, path, scriptPath, rowsInOrder);
 					}
 				}
 			}
@@ -120,25 +131,60 @@ namespace AetherNexus.UIWidgets.Editor.UIRefBinder
 			}
 		}
 
-		private static void PruneStaleRows(List<GameObject> selected)
+		private static bool TryGetDeclaredFieldsCached(string scriptPath, out List<DeclaredFieldInfo> declaredFields, out string error)
+		{
+			error = null;
+			string fullPath;
+			long writeTicks;
+			try
+			{
+				fullPath = Path.GetFullPath(scriptPath);
+				writeTicks = File.GetLastWriteTimeUtc(fullPath).Ticks;
+			}
+			catch (Exception ex)
+			{
+				declaredFields = null;
+				error = ex.Message;
+				return false;
+			}
+
+			if (s_declaredFieldsCache.TryGetValue(scriptPath, out var cached) && cached.writeTimeTicks == writeTicks)
+			{
+				declaredFields = cached.declared;
+				return true;
+			}
+
+			string scriptSource;
+			try { scriptSource = File.ReadAllText(fullPath); }
+			catch (Exception ex)
+			{
+				declaredFields = null;
+				error = ex.Message;
+				return false;
+			}
+
+			declaredFields = ScriptFieldScanner.ParseDeclaredFields(scriptSource);
+			s_declaredFieldsCache[scriptPath] = (writeTicks, declaredFields);
+			return true;
+		}
+
+		private static void PruneStaleRows(MonoBehaviour view, string path, List<GameObject> selected)
 		{
 			if (s_rows.Count == 0)
 				return;
 
 			var selectedSet = new HashSet<GameObject>(selected);
-			var stale = s_rows.Keys.Where(go => go == null || !selectedSet.Contains(go)).ToList();
-			foreach (var go in stale)
-				s_rows.Remove(go);
+			var stale = s_rows.Keys.Where(k => k.view == view && k.path == path && (k.go == null || !selectedSet.Contains(k.go))).ToList();
+			foreach (var k in stale)
+				s_rows.Remove(k);
 		}
 
-		private static RowState GetOrCreateRow(GameObject go, List<ExistingFieldInfo> unassignedFields,
+		private static RowState GetOrCreateRow(MonoBehaviour view, string path, GameObject go, List<ExistingFieldInfo> unassignedFields,
 			HashSet<string> claimedExistingFields, HashSet<string> claimedNewNames)
 		{
-			if (s_rows.TryGetValue(go, out var existing))
-			{
-				existing.candidateTypes = UIComponentTypeCatalog.GetCandidateTypes(go);
+			var key = (view, path, go);
+			if (s_rows.TryGetValue(key, out var existing))
 				return existing;
-			}
 
 			var row = new RowState { gameObject = go, candidateTypes = UIComponentTypeCatalog.GetCandidateTypes(go) };
 
@@ -164,7 +210,7 @@ namespace AetherNexus.UIWidgets.Editor.UIRefBinder
 				row.newFieldName = MakeUniqueFieldName(go.name, claimedNewNames);
 			}
 
-			s_rows[go] = row;
+			s_rows[key] = row;
 			return row;
 		}
 
@@ -253,14 +299,14 @@ namespace AetherNexus.UIWidgets.Editor.UIRefBinder
 			return char.ToLowerInvariant(id[0]) + id.Substring(1);
 		}
 
-		private static void Commit(MonoBehaviour view, string scriptPath, List<RowState> rows)
+		private static void Commit(SerializedProperty property, MonoBehaviour view, string path, string scriptPath, List<RowState> rows)
 		{
 			var immediateRows = rows.Where(r => r.assignExisting && !string.IsNullOrEmpty(r.existingFieldName)).ToList();
 			var newFieldRows = rows.Where(r => !r.assignExisting && !string.IsNullOrEmpty(r.newFieldName)).ToList();
 
 			if (immediateRows.Count > 0)
 			{
-				var so = new SerializedObject(view);
+				var so = property.serializedObject;
 				foreach (var row in immediateRows)
 				{
 					var prop = so.FindProperty(row.existingFieldName);
@@ -295,7 +341,7 @@ namespace AetherNexus.UIWidgets.Editor.UIRefBinder
 			}
 
 			foreach (var row in rows)
-				s_rows.Remove(row.gameObject);
+				s_rows.Remove((view, path, row.gameObject));
 		}
 	}
 }

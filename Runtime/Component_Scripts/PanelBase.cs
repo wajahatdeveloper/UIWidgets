@@ -18,6 +18,9 @@ namespace AetherNexus.UIWidgets
 
         protected virtual int ChildIndex => -1;
 
+        [Header("UI Ref Binder")]
+        [SerializeField] private UIRefBinder uiRefBinder;
+
         [Header("Modal")]
         [Tooltip("When true, Show()/Hide() route through ModalService: only one modal is visible at a time, " +
                  "an input-blocking backdrop is raised behind it, and it is sorted above base UI. " +

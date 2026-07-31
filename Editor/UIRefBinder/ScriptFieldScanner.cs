@@ -7,6 +7,18 @@ using UnityEngine;
 
 namespace AetherNexus.UIWidgets.Editor.UIRefBinder
 {
+	internal readonly struct DeclaredFieldInfo
+	{
+		public readonly string fieldName;
+		public readonly Type fieldType;
+
+		public DeclaredFieldInfo(string fieldName, Type fieldType)
+		{
+			this.fieldName = fieldName;
+			this.fieldType = fieldType;
+		}
+	}
+
 	internal readonly struct ExistingFieldInfo
 	{
 		public readonly string fieldName;
@@ -23,8 +35,10 @@ namespace AetherNexus.UIWidgets.Editor.UIRefBinder
 
 	/// <summary>
 	/// Source-text scan (not Roslyn, matching this codebase's established convention — see
-	/// DeterministicRandomLint.cs) for [SerializeField] field declarations of Component-derived types
-	/// in a target script, cross-referenced against the live SerializedObject to know which are assigned.
+	/// DeterministicRandomLint.cs) for [SerializeField] field declarations of Component-derived types.
+	/// Split in two: parsing the raw text (the expensive half — the caller caches this by the script's
+	/// last-write time) and cross-referencing against the live SerializedObject for assignment state
+	/// (cheap, always re-checked so a just-applied bind is reflected immediately).
 	/// </summary>
 	internal static class ScriptFieldScanner
 	{
@@ -33,14 +47,12 @@ namespace AetherNexus.UIWidgets.Editor.UIRefBinder
 			@"(?<type>[A-Za-z_][A-Za-z0-9_.]*)\s+(?<name>[A-Za-z_][A-Za-z0-9_]*)\s*(?:=[^;]+)?;",
 			RegexOptions.Compiled);
 
-		/// <summary>All Component-typed [SerializeField] fields declared in the script, with their current assignment state.</summary>
-		internal static List<ExistingFieldInfo> ScanFields(MonoBehaviour target, string scriptSource)
+		/// <summary>All Component-typed [SerializeField] fields declared in the script text.</summary>
+		internal static List<DeclaredFieldInfo> ParseDeclaredFields(string scriptSource)
 		{
-			var result = new List<ExistingFieldInfo>();
-			if (target == null || string.IsNullOrEmpty(scriptSource))
+			var result = new List<DeclaredFieldInfo>();
+			if (string.IsNullOrEmpty(scriptSource))
 				return result;
-
-			var so = new SerializedObject(target);
 
 			foreach (Match m in FieldRegex.Matches(scriptSource))
 			{
@@ -52,11 +64,23 @@ namespace AetherNexus.UIWidgets.Editor.UIRefBinder
 				if (!typeof(Component).IsAssignableFrom(fieldType) && fieldType != typeof(GameObject))
 					continue;
 
-				var prop = so.FindProperty(fieldName);
+				result.Add(new DeclaredFieldInfo(fieldName, fieldType));
+			}
+
+			return result;
+		}
+
+		/// <summary>Cross-references parsed field declarations against the live SerializedObject for current assignment state.</summary>
+		internal static List<ExistingFieldInfo> ToExistingFields(SerializedObject so, List<DeclaredFieldInfo> declaredFields)
+		{
+			var result = new List<ExistingFieldInfo>(declaredFields.Count);
+			foreach (var d in declaredFields)
+			{
+				var prop = so.FindProperty(d.fieldName);
 				if (prop == null || prop.propertyType != SerializedPropertyType.ObjectReference)
 					continue;
 
-				result.Add(new ExistingFieldInfo(fieldName, fieldType, prop.objectReferenceValue != null));
+				result.Add(new ExistingFieldInfo(d.fieldName, d.fieldType, prop.objectReferenceValue != null));
 			}
 
 			return result;

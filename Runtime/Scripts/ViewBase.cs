@@ -8,5 +8,8 @@ namespace AetherNexus.UIWidgets
 	///  Kept intentionally light; views compose their own references and lifecycle hooks
 	///  (e.g. ISimulationStart). Modal coordination is handled independently by <see cref="ModalService"/>.
 	/// </summary>
-	public abstract class ViewBase : MonoBehaviour { }
+	public abstract class ViewBase : MonoBehaviour
+	{
+		[SerializeField] private UIRefBinder uiRefBinder;
+	}
 }

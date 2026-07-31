@@ -134,7 +134,7 @@ scrollList.SetDataSource(observableItems); // ObservableList<T> — reactive aut
 | `TextToTMPMigrationTool` | `Editor/` | migrate legacy `Text` → TMP |
 | `UIWidgetsSceneOverlay` | `Editor/` | scene-view overlay |
 | Central Authoring plugin | `Editor/Integration/GameEngineCore/` | **optional**, see Assemblies |
-| UI Ref Binder | `Editor/UIRefBinder/` | "Bind UI From Selection" foldout injected into every MonoBehaviour's Inspector (via `AetherInspectorEditor.DrawExtraSections`). Lock the Inspector on a hand-written view script, multi-select UI GameObjects in the Hierarchy, and either fill an existing empty `[SerializeField]` reference or insert a new one into a marked region of that same script — no separate window, no generated class. |
+| UI Ref Binder | `Editor/UIRefBinder/` | Declare `[SerializeField] private UIRefBinder ...;` on any MonoBehaviour (already present on `PanelBase` and `ViewBase`) to get a "Bind UI From Selection" foldout inline in that field's own Inspector row. Multi-select UI GameObjects in the Hierarchy — it either fills an existing empty `[SerializeField]` reference on the script or inserts a new one into a marked region of its source. |
 
 ---
 
