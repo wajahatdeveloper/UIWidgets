@@ -19,6 +19,12 @@ MonoBehaviour:
   packageToolMenuPaths: []
   setupInstructions: 
   gameplayTags: []
+  domains:
+  - DomainName: UI
+    Kind: 0
+    Summary: Widget prefabs, panel definitions and UI presentation assets for the product.
+    Subfolders: []
+    CreateScriptsFolder: 1
   typeMappings:
   - TypeScript: {fileID: 11500000, guid: c640406ebf25b044c984be73ec6b8eb7, type: 3}
     AuthoringTier: 2
@@ -34,7 +40,6 @@ MonoBehaviour:
       Tokens:
       - Kind: 3
         Literal: 
-  requiredProjectFolders: []
   productAssemblyScaffold:
     Enabled: 0
     AsmdefAssetPath: 
