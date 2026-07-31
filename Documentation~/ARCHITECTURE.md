@@ -118,7 +118,6 @@ scrollList.SetDataSource(observableItems); // ObservableList<T> — reactive aut
 
 ## Utilities
 
-- `AutoUIRefs` (`Scripts/AutoUIRefs.cs`) — recursive component scan (Button, ButtonX, TMP text/input/dropdown, Image, Toggle, Slider, ScrollRect, MonoBehaviours); options `includeInactive`, `preventDuplicates`, `includeMonoBehaviourScripts`. Editor: `AutoUIRefsEditor`.
 - `SafeArea` — adapts rect to device notch/safe area
 - `BezierPath` — cubic Bézier spline
 - `UIInput` — polling input facade (Input System / legacy backend)
@@ -135,6 +134,7 @@ scrollList.SetDataSource(observableItems); // ObservableList<T> — reactive aut
 | `TextToTMPMigrationTool` | `Editor/` | migrate legacy `Text` → TMP |
 | `UIWidgetsSceneOverlay` | `Editor/` | scene-view overlay |
 | Central Authoring plugin | `Editor/Integration/GameEngineCore/` | **optional**, see Assemblies |
+| UI Ref Binder | `Editor/UIRefBinder/` | "Bind UI From Selection" foldout injected into every MonoBehaviour's Inspector (via `AetherInspectorEditor.DrawExtraSections`). Lock the Inspector on a hand-written view script, multi-select UI GameObjects in the Hierarchy, and either fill an existing empty `[SerializeField]` reference or insert a new one into a marked region of that same script — no separate window, no generated class. |
 
 ---
 

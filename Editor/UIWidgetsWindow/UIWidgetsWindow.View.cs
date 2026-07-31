@@ -81,7 +81,6 @@ namespace AetherNexus.UIWidgets.Editor
 		{
 			("Behaviours", "Safe Area", typeof(SafeArea)),
 			("Behaviours", "UI Default State", typeof(UIDefaultState)),
-			("Behaviours", "Auto UI Refs", typeof(AutoUIRefs)),
 			("Behaviours", "Layout X", typeof(LayoutX)),
 			("Effects", "Gradient", typeof(UIGradient)),
 			("Effects", "Canvas Particles", typeof(UICanvasParticles)),
