@@ -23,13 +23,15 @@ namespace AetherNexus.UIWidgets.Editor.UIRefBinder
 	{
 		public readonly string fieldName;
 		public readonly Type fieldType;
-		public readonly bool isAssigned;
+		public readonly UnityEngine.Object currentValue;
 
-		public ExistingFieldInfo(string fieldName, Type fieldType, bool isAssigned)
+		public bool isAssigned => currentValue != null;
+
+		public ExistingFieldInfo(string fieldName, Type fieldType, UnityEngine.Object currentValue)
 		{
 			this.fieldName = fieldName;
 			this.fieldType = fieldType;
-			this.isAssigned = isAssigned;
+			this.currentValue = currentValue;
 		}
 	}
 
@@ -80,7 +82,7 @@ namespace AetherNexus.UIWidgets.Editor.UIRefBinder
 				if (prop == null || prop.propertyType != SerializedPropertyType.ObjectReference)
 					continue;
 
-				result.Add(new ExistingFieldInfo(d.fieldName, d.fieldType, prop.objectReferenceValue != null));
+				result.Add(new ExistingFieldInfo(d.fieldName, d.fieldType, prop.objectReferenceValue));
 			}
 
 			return result;

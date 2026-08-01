@@ -67,6 +67,17 @@ namespace AetherNexus.UIWidgets.Editor.UIRefBinder
 			if (!expanded)
 				return;
 
+			if (EditorApplication.isCompiling || EditorApplication.isUpdating)
+			{
+				EditorGUI.indentLevel++;
+				// A field insert from a prior bind may still be mid-compile: the SerializedObject
+				// won't expose it yet, so name-collision checks against it can't be trusted. Block
+				// binding entirely rather than risk generating a colliding duplicate field.
+				EditorGUILayout.HelpBox("Waiting for Unity to finish compiling before binding…", MessageType.Info);
+				EditorGUI.indentLevel--;
+				return;
+			}
+
 			var selected = new List<GameObject>();
 			foreach (var go in Selection.gameObjects)
 			{
@@ -97,14 +108,19 @@ namespace AetherNexus.UIWidgets.Editor.UIRefBinder
 				PruneStaleRows(view, path, selected);
 
 				var claimedExistingFields = new HashSet<string>();
-				var claimedNewNames = new HashSet<string>(existingFields.Select(f => f.fieldName));
+				// Sourced from the raw text parse (declaredFields), not existingFields: existingFields
+				// is cross-referenced against the currently *compiled* SerializedObject, which won't
+				// yet expose a field inserted by a bind whose recompile hasn't landed. Using the
+				// compile-independent parse here is what stops that stale window from generating a
+				// literal duplicate field declaration.
+				var claimedNewNames = new HashSet<string>(declaredFields.Select(f => f.fieldName));
 				var rowsInOrder = new List<RowState>();
 
 				foreach (var go in selected)
 				{
-					RowState row = GetOrCreateRow(view, path, go, unassignedFields, claimedExistingFields, claimedNewNames);
+					RowState row = GetOrCreateRow(view, path, go, existingFields, unassignedFields, claimedExistingFields, claimedNewNames);
 					rowsInOrder.Add(row);
-					DrawRow(row, go, unassignedFields, claimedExistingFields);
+					DrawRow(row, go, existingFields, claimedExistingFields);
 
 					if (row.assignExisting && !string.IsNullOrEmpty(row.existingFieldName))
 						claimedExistingFields.Add(row.existingFieldName);
@@ -179,14 +195,36 @@ namespace AetherNexus.UIWidgets.Editor.UIRefBinder
 				s_rows.Remove(k);
 		}
 
-		private static RowState GetOrCreateRow(MonoBehaviour view, string path, GameObject go, List<ExistingFieldInfo> unassignedFields,
-			HashSet<string> claimedExistingFields, HashSet<string> claimedNewNames)
+		private static RowState GetOrCreateRow(MonoBehaviour view, string path, GameObject go, List<ExistingFieldInfo> existingFields,
+			List<ExistingFieldInfo> unassignedFields, HashSet<string> claimedExistingFields, HashSet<string> claimedNewNames)
 		{
 			var key = (view, path, go);
 			if (s_rows.TryGetValue(key, out var existing))
 				return existing;
 
 			var row = new RowState { gameObject = go, candidateTypes = UIComponentTypeCatalog.GetCandidateTypes(go) };
+
+			// Idempotency: if some field already points at this exact GameObject, reuse it — rebinding
+			// the same selection overwrites that field instead of generating a duplicate.
+			ExistingFieldInfo? alreadyBound = null;
+			foreach (var f in existingFields)
+			{
+				if (BelongsToGameObject(f.currentValue, go))
+				{
+					alreadyBound = f;
+					break;
+				}
+			}
+
+			if (alreadyBound.HasValue)
+			{
+				row.assignExisting = true;
+				row.existingFieldName = alreadyBound.Value.fieldName;
+				int typeIndex = row.candidateTypes.IndexOf(alreadyBound.Value.fieldType);
+				row.selectedTypeIndex = typeIndex >= 0 ? typeIndex : 0;
+				s_rows[key] = row;
+				return row;
+			}
 
 			ExistingFieldInfo? bestMatch = null;
 			foreach (var f in unassignedFields)
@@ -214,7 +252,18 @@ namespace AetherNexus.UIWidgets.Editor.UIRefBinder
 			return row;
 		}
 
-		private static void DrawRow(RowState row, GameObject go, List<ExistingFieldInfo> unassignedFields, HashSet<string> claimedExistingFields)
+		private static bool BelongsToGameObject(UnityEngine.Object value, GameObject go)
+		{
+			if (value == null)
+				return false;
+			if (value is GameObject valueGo)
+				return valueGo == go;
+			if (value is Component component)
+				return component.gameObject == go;
+			return false;
+		}
+
+		private static void DrawRow(RowState row, GameObject go, List<ExistingFieldInfo> existingFields, HashSet<string> claimedExistingFields)
 		{
 			using (new EditorGUILayout.VerticalScope(EditorStyles.helpBox))
 			{
@@ -233,8 +282,10 @@ namespace AetherNexus.UIWidgets.Editor.UIRefBinder
 				}
 				EditorGUILayout.EndHorizontal();
 
-				var matchingExisting = unassignedFields
-					.Where(f => (f.fieldName == row.existingFieldName || !claimedExistingFields.Contains(f.fieldName))
+				// Include the field this row is already assigned to (even if it's the assigned slot
+				// this exact GameObject is already bound to) alongside any free unclaimed slots.
+				var matchingExisting = existingFields
+					.Where(f => (f.fieldName == row.existingFieldName || (!f.isAssigned && !claimedExistingFields.Contains(f.fieldName)))
 						&& UIComponentTypeCatalog.HasReference(go, f.fieldType))
 					.Select(f => f.fieldName)
 					.ToList();
