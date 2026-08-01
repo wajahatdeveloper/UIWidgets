@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using AetherNexus.FoundationPlatform.Utilities.Menus;
 using AetherNexus.GameEngineCore.Editor;
+using UnityEngine;
 using UnityEngine.SceneManagement;
 
 namespace AetherNexus.UIWidgets.Editor
