@@ -3,16 +3,15 @@ using System;
 using System.Collections.Generic;
 using AetherNexus.FoundationPlatform.Utilities.Menus;
 using AetherNexus.GameEngineCore.Editor;
-using UnityEditor;
-using UnityEngine;
 using UnityEngine.SceneManagement;
-using static AetherNexus.GameEngineCore.Editor.PackageWorkflowBuilder;
 
 namespace AetherNexus.UIWidgets.Editor
 {
 	/// <summary>
-	/// Contributes a UIWidgets setup workflow to CentralAuthoring without
-	/// GameEngineCore.Editor referencing the UIWidgets assembly.
+	/// Contributes UIWidgets validation status and a Tool Window shortcut to CentralAuthoring
+	/// without GameEngineCore.Editor referencing the UIWidgets assembly. Widget placement is a
+	/// GameObject/Prefab-drop task done via the UI Widgets Window itself, not a Central Window
+	/// workflow.
 	/// </summary>
 	public sealed class UIWidgetsCentralAuthoringPlugin : ICentralAuthoringPlugin
 	{
@@ -20,27 +19,11 @@ namespace AetherNexus.UIWidgets.Editor
 		public string DisplayName => "UI Widgets";
 		public int Priority => 100;
 
-		public PackageWorkflowDefinition[] GetWorkflowDefinitions()
+		public IReadOnlyList<(string Label, string MenuPath)> GetToolWindowShortcuts()
 		{
 			return new[]
 			{
-				new PackageWorkflowDefinition
-				{
-					WorkflowId = "widget-setup",
-					DisplayLabel = "Widget Setup",
-					ContextSectionTitle = "UI Widgets Context",
-					ContextMessage =
-						"Browse the shared widget library and place reusable UI widgets into your scene canvases.",
-					SourceOfTruthMessage =
-						"Widget prefabs are curated in the UI Widgets library. Open the UI Widgets Window to browse and instantiate them into the open scene (Scene).",
-					ScopedTypeNames = Array.Empty<string>(),
-					PrimaryActions = new[]
-					{
-						ActionMenu("Open UI Widgets Window", MenuPaths.UIWidgets.WidgetsWindow)
-					},
-					ReadinessChecks = Array.Empty<PackageWorkflowReadinessDef>(),
-					IntegrationLinks = Array.Empty<PackageWorkflowIntegrationLinkDef>()
-				}
+				("UI Widgets Window", MenuPaths.UIWidgets.WidgetsWindow)
 			};
 		}
 
